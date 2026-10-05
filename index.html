@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Plan de entrenamiento en casa con TRX, chaleco y pesas: sesiones, temporizador y registro.">
+<meta name="theme-color" content="#F6F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151311" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FitJan">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>FitJan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+  :root {
+    --bg: #F6F4F1;
+    --surface: #FFFFFF;
+    --sunken: #ECE8E3;
+    --ink: #1D1A17;
+    --muted: #615A53;
+    --line: #E0DAD3;
+    --accent: #C2410C;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #FCE9DF;
+    --accent-line: #F3C9B2;
+    --leg: #0F766E;
+    --leg-ink: #FFFFFF;
+    --ok: #2F7A4B;
+    --ok-ink: #FFFFFF;
+    --ok-soft: #E6F2EA;
+    --ok-line: #BFDCC9;
+    --ok-text: #24603A;
+    --danger: #B42318;
+    --shadow: 0 1px 2px rgba(29, 26, 23, 0.08);
+    --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+    --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151311;
+      --surface: #1F1C19;
+      --sunken: #2A2622;
+      --ink: #F3EFEA;
+      --muted: #A79F96;
+      --line: #353029;
+      --accent: #FB8A4C;
+      --accent-ink: #1A0F08;
+      --accent-soft: #3A2418;
+      --accent-line: #5C3622;
+      --leg: #2DD4BF;
+      --leg-ink: #062421;
+      --ok: #5BC283;
+      --ok-ink: #0B2414;
+      --ok-soft: #15261B;
+      --ok-line: #24402D;
+      --ok-text: #7FD6A0;
+      --danger: #D92D20;
+      --shadow: none;
+      color-scheme: dark;
+    }
+  }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--body); font-size: 16px; line-height: 1.45;
+    padding-inline: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 640px; margin: 0 auto; padding-block: 0 104px; }
+
+  /* Cabecera */
+  .top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--bg); margin-inline: -16px; padding-inline: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .top-in { max-width: 640px; margin: 0 auto; padding-block: 12px 10px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .top h1 { font-family: var(--display); font-weight: 700; font-size: 30px; line-height: 1.05; margin: 2px 0 0; letter-spacing: 0.01em; }
+  .top .sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .top-seg { margin-top: 10px; }
+
+  /* Barra inferior */
+  .tabs {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .tabs-in { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .tabs button {
+    background: none; border: 0; padding: 9px 2px 10px; color: var(--muted);
+    font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .tabs svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .tabs button[aria-current="page"] { color: var(--accent); font-weight: 700; }
+
+  /* Piezas comunes */
+  .view { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
+  .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; background: var(--sunken); border-radius: 11px; padding: 3px; }
+  .seg button { border: 0; background: transparent; padding: 8px 2px; border-radius: 8px; font-weight: 700; color: var(--muted); font-size: 14.5px; white-space: nowrap; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+  .h2 { font-family: var(--display); font-weight: 700; font-size: 22px; margin: 6px 0 -4px; }
+  .lede { color: var(--muted); font-size: 14.5px; margin: 0; }
+  .note-box { background: var(--sunken); border-radius: 10px; padding: 10px 12px; font-size: 14.5px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+  .bdg { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; line-height: 1.5; background: var(--sunken); color: var(--muted); white-space: nowrap; }
+  .bdg.acc { background: var(--accent-soft); color: var(--accent); }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+    border: 0; border-radius: 12px; padding: 14px 16px; font-weight: 700; font-size: 17px;
+    background: var(--accent); color: var(--accent-ink);
+  }
+  .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent-line); }
+
+  /* Hoy */
+  .today { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .today .k { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .today .name { font-family: var(--display); font-weight: 700; font-size: 44px; line-height: 0.95; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .rot span {
+    text-align: center; border-radius: 9px; padding: 7px 2px; font-weight: 700; font-size: 13.5px;
+    background: var(--sunken); color: var(--muted); position: relative;
+  }
+  .rot span.on { background: var(--accent); color: var(--accent-ink); }
+  .blist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .blist li { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .blist .l { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--accent); }
+  .blist .s { color: var(--muted); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+
+  /* Plan */
+  .block { overflow: hidden; }
+  .bhead { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--sunken); }
+  .bletter {
+    font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1;
+    width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink); flex: none;
+  }
+  .bhead strong { font-size: 15px; }
+  .bhead .s { color: var(--muted); font-size: 13px; }
+  details.ex + details.ex { border-top: 1px solid var(--line); }
+  details.ex > summary {
+    list-style: none; cursor: pointer; padding: 12px 14px; display: grid;
+    grid-template-columns: 34px 1fr 16px; gap: 10px; align-items: center;
+  }
+  details.ex > summary::-webkit-details-marker { display: none; }
+  details.ex > summary::after { content: "+"; font-size: 20px; color: var(--muted); line-height: 1; text-align: center; }
+  details.ex[open] > summary::after { content: "–"; }
+  .slot { font-family: var(--display); font-weight: 700; font-size: 16px; color: var(--accent); border: 1px solid var(--accent-line); border-radius: 7px; text-align: center; padding: 2px 0; }
+  .ex-n { font-weight: 700; line-height: 1.25; }
+  .ex-s { color: var(--muted); font-size: 13.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .ex-body { padding: 0 14px 14px 58px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+  .ex-body h4 { margin: 0 0 3px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .ex-body ol, .ex-body ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .vid { font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .vid svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Marcar como hecha */
+  .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .vh { position: fixed; left: 50%; bottom: 50%; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; pointer-events: none; }
+  .link { background: none; border: 0; padding: 6px 0; color: var(--accent); font-weight: 700; font-size: 15px; }
+  .s { color: var(--muted); font-size: 13.5px; }
+  .mark { display: flex; flex-direction: column; gap: 6px; }
+  .mark-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .mark-card { padding: 12px 14px; }
+  .mark-row { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; }
+  .done-ic { width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; background: var(--ok); color: var(--ok-ink); }
+  .done-ic .ic { width: 18px; height: 18px; stroke-width: 2.6; }
+  .done-today { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border-color: var(--ok-line); background: var(--ok-soft); }
+  .done-today .k { font-size: 13px; font-weight: 700; color: var(--ok-text); text-transform: uppercase; letter-spacing: 0.06em; }
+  .del { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .del.on { background: var(--danger); border-color: var(--danger); color: #FFFFFF; }
+
+  /* Etiquetas de sesión */
+  .tag { display: inline-block; font-family: var(--display); font-weight: 700; font-size: 12px; line-height: 1; padding: 3px 4px 2px; border-radius: 4px; letter-spacing: 0.02em; }
+  .tag.torso { background: var(--accent); color: var(--accent-ink); }
+  .tag.pierna { background: var(--leg); color: var(--leg-ink); }
+
+  /* Calendario */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { padding: 10px 14px; display: flex; flex-direction: column; }
+  .stat b { font-family: var(--display); font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat span { color: var(--muted); font-size: 13.5px; }
+  .cal { padding: 10px 10px 12px; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; padding: 0 2px 8px; }
+  .cal-head strong { font-family: var(--display); font-size: 22px; }
+  .nav { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--sunken); display: grid; place-items: center; color: var(--ink); }
+  .wk, .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .wk span { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding-bottom: 4px; }
+  .day {
+    border: 1px solid transparent; background: transparent; border-radius: 10px; min-height: 50px; padding: 4px 0 5px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px; font-variant-numeric: tabular-nums;
+  }
+  .day .dn { font-size: 15px; line-height: 1.2; }
+  .day.has { background: var(--sunken); }
+  .day.has .dn { font-weight: 700; }
+  .day.is-future .dn { color: var(--muted); }
+  .day.is-today { border-color: var(--accent); }
+  .day.is-today .dn { color: var(--accent); font-weight: 700; }
+  .day.is-sel { background: var(--ink); border-color: var(--ink); }
+  .day.is-sel .dn { color: var(--bg); }
+  .legend { display: flex; align-items: center; gap: 14px; padding: 10px 4px 0; font-size: 13.5px; color: var(--muted); }
+  .legend .link { margin-left: auto; padding: 0; }
+  .sel-day { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .sel-day .h2 { margin: 0; }
+  .entries { list-style: none; margin: 0; padding: 0; }
+  .entries li { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+  .entries li:first-child { border-top: 0; padding-top: 0; }
+  .add .k { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .chip { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px; font-weight: 700; font-size: 15px; text-align: left; }
+
+  /* Entrenamiento en marcha */
+  body.lock { overflow: hidden; }
+  .mark-card { display: flex; flex-direction: column; gap: 10px; }
+  .today > .link { align-self: center; }
+  .live {
+    position: fixed; inset: 0; z-index: 30; background: var(--bg); overflow-y: auto; overscroll-behavior: contain;
+    padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px);
+  }
+  .lv-in { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; gap: 14px; padding-bottom: 16px; }
+  .lv-top { display: grid; grid-template-columns: 40px 1fr 40px; gap: 10px; align-items: center; padding-top: 12px; }
+  .lv-title { display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.25; }
+  .lv-title strong { font-family: var(--display); font-size: 22px; }
+  .lv-title .s { font-variant-numeric: tabular-nums; }
+  .lv-bar { height: 5px; border-radius: 999px; background: var(--sunken); overflow: hidden; }
+  .lv-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s; }
+  .lv-phase {
+    align-self: center; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 999px; background: var(--sunken); color: var(--muted);
+  }
+  .lv-phase.work { background: var(--accent); color: var(--accent-ink); }
+  .lv-phase.rest { background: var(--leg); color: var(--leg-ink); }
+  .lv-phase.paused { background: var(--ink); color: var(--bg); }
+  .lv-phase.done { background: var(--ok); color: var(--ok-ink); }
+  .lv-clock { font-family: var(--display); font-weight: 700; font-size: 84px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+  .lv-big { display: grid; place-items: center; min-height: 150px; }
+  .lv-ready { font-family: var(--display); font-weight: 700; font-size: 30px; color: var(--muted); text-align: center; }
+  .lv-ring { position: relative; width: min(200px, 56vw); aspect-ratio: 1; align-self: center; display: grid; place-items: center; }
+  .lv-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+  .lv-ring circle { fill: none; stroke-width: 12; }
+  .lv-ring .bg { stroke: var(--sunken); }
+  .lv-ring .fg { stroke: var(--leg); stroke-linecap: round; transition: stroke-dashoffset 0.25s linear; }
+  .lv-ring.paused .fg { stroke: var(--muted); }
+  .lv-ring .lv-clock { font-size: 64px; }
+  .lv-last { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14.5px; }
+  .lv-last .s { font-size: 12.5px; }
+  .lv-ex { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
+  .lv-lab { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .lv-name { display: grid; grid-template-columns: 38px 1fr; gap: 10px; align-items: center; }
+  .lv-name h2 { margin: 0; font-size: 21px; line-height: 1.2; }
+  .lv-set { font-size: 16px; color: var(--muted); }
+  .lv-set b { color: var(--ink); font-size: 20px; }
+  .lv-hint { margin: 0; font-size: 14.5px; color: var(--muted); }
+  .lv-how { margin: 0; padding-left: 18px; font-size: 15px; display: flex; flex-direction: column; gap: 3px; }
+  .lv-ex .link { align-self: flex-start; padding: 2px 0; }
+  .lv-ctrl { margin-top: auto; position: sticky; bottom: 0; padding: 10px 0 6px; background: var(--bg); }
+  .btn.huge { min-height: 72px; font-size: 22px; border-radius: 16px; }
+  .btn.huge .ic { width: 26px; height: 26px; }
+  .btn.soft { background: var(--sunken); color: var(--ink); }
+  .lv-row { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; }
+  .lv-row .btn { min-height: 64px; padding: 10px 6px; }
+  .lv-sheet {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; background: var(--surface); border-top: 1px solid var(--line);
+    border-radius: 18px 18px 0 0; box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.18);
+    padding: 18px 16px calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 10px;
+    max-width: 560px; margin: 0 auto;
+  }
+  .lv-sheet strong { font-size: 18px; text-align: center; padding-bottom: 4px; }
+  .del.wide { padding: 13px 16px; font-size: 16px; }
+  .lv-done { align-items: stretch; text-align: center; padding-top: 32px; }
+  .lv-done .name { font-family: var(--display); font-weight: 700; font-size: 44px; line-height: 1; margin: 0; }
+  .done-ic.big { width: 64px; height: 64px; align-self: center; }
+  .done-ic.big .ic { width: 34px; height: 34px; }
+  .lv-done .stats { text-align: left; }
+  .entries.sum { padding: 4px 14px; text-align: left; }
+  .entries.sum li { grid-template-columns: 30px 1fr auto; border-top: 1px solid var(--line); padding: 9px 0; }
+  .entries.sum li:first-child { border-top: 0; padding-top: 9px; }
+
+  /* Repeticiones, kg y objetivos */
+  .ink { color: var(--ink); }
+  .upt { color: var(--ok-text); font-weight: 700; }
+  .upb { background: var(--ok-soft); color: var(--ok-text); border: 1px solid var(--ok-line); border-radius: 9px; padding: 6px 10px; font-size: 14px; font-weight: 700; }
+  .lv-goal { font-size: 18px; }
+  .lv-goal b { font-family: var(--display); font-size: 28px; color: var(--accent); }
+  .lv-note { margin: 0; font-size: 14.5px; background: var(--sunken); border-radius: 8px; padding: 6px 10px; }
+  .lv-last { display: flex; flex-direction: column; gap: 10px; }
+  .lv-last-h { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; }
+  .stps { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stp { display: grid; grid-template-columns: 44px 1fr 44px; grid-template-rows: auto 44px; align-items: center; text-align: center; background: var(--sunken); border-radius: 12px; padding: 6px; row-gap: 2px; }
+  .stp-l { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .stp-v { font-family: var(--display); font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stp-b { width: 44px; height: 44px; border: 0; border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 24px; font-weight: 700; line-height: 1; box-shadow: var(--shadow); }
+  .tgt { display: flex; flex-direction: column; gap: 8px; background: var(--sunken); border-radius: 12px; padding: 10px; }
+  .tgt h4 { display: flex; align-items: center; gap: 6px; }
+  .tgt h4 .bdg { background: var(--surface); text-transform: none; letter-spacing: 0; }
+  .tgt-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 6px; }
+  .tgt-kg { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .tgt-kg .mst { width: 140px; }
+  .mst { display: grid; grid-template-columns: 22px 36px minmax(28px, 1fr) 36px; align-items: center; gap: 2px; background: var(--surface); border-radius: 10px; padding: 4px; }
+  .mst span { font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; }
+  .mst b { text-align: center; font-variant-numeric: tabular-nums; font-size: 17px; }
+  .mst .stp-b { width: 36px; height: 36px; font-size: 20px; background: var(--sunken); box-shadow: none; }
+  .note h4 { margin-bottom: 4px; }
+  .note textarea { width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; resize: vertical; }
+  .entries.sum li { grid-template-columns: 1fr; }
+  .entries.sum li > div { display: flex; flex-direction: column; gap: 3px; }
+  .entries.sum .upb { align-self: flex-start; font-size: 12.5px; padding: 3px 8px; }
+
+  /* Vacíos */
+  .empty { padding: 28px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .empty svg { width: 44px; height: 44px; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .empty p { margin: 0; color: var(--muted); font-size: 15px; max-width: 32ch; }
+  .empty strong { font-size: 17px; }
+
+  @media (min-width: 400px) { .seg button { font-size: 15px; } }
+  @media (max-width: 479px) { .ex-body { padding-left: 14px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="top-in" id="top"></div></header>
+  <main>
+    <section class="view" id="v-hoy" hidden></section>
+    <section class="view" id="v-plan" hidden></section>
+    <section class="view" id="v-calendario" hidden></section>
+    <section class="view" id="v-guia" hidden></section>
+  </main>
+</div>
+
+<div class="live" id="live" hidden role="dialog" aria-modal="true" aria-label="Entrenamiento en marcha"></div>
+<input type="date" id="pick" class="vh" aria-label="Elegir día" tabindex="-1">
+
+<nav class="tabs" aria-label="Secciones">
+  <div class="tabs-in">
+    <button data-tab="hoy"><svg viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg>Hoy</button>
+    <button data-tab="plan"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg>Plan</button>
+    <button data-tab="calendario"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Calendario</button>
+    <button data-tab="guia"><svg viewBox="0 0 24 24"><path d="M5 4.5h10.5a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10.5M9 8.5h6"/></svg>Guía</button>
+  </div>
+</nav>
+
+<script>
+/* ============================================================
+   EJERCICIOS
+   n: nombre · m: músculos · t: 'reps' o 'time' · side: por pierna
+   heavy: cansa todo el cuerpo (descanso largo) · load: carga por defecto
+   kg: carga extra por defecto (chaleco, pesas) · trx: largo de las cintas
+   how: técnica · up: cómo subir dificultad
+   ============================================================ */
+const EX = {
+  'flexiones': {
+    n: 'Flexiones con chaleco', m: ['Pecho', 'Tríceps', 'Hombro delantero'], t: 'reps', load: 'Chaleco 10 kg', kg: 10,
+    how: ['Manos algo más abiertas que los hombros.', 'Cuerpo recto, glúteo y abdomen apretados.', 'Baja hasta que el pecho casi toque el suelo, con los codos a unos 45°.'],
+    up: ['Bajar en 3 segundos y pausa abajo.', 'Pies elevados en una silla.']
+  },
+  'remo-neutro': {
+    n: 'Remo TRX con agarre neutro', m: ['Dorsal', 'Espalda media', 'Bíceps'], t: 'reps', trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['Palmas mirándose y codos pegados al cuerpo.', 'Cuerpo recto, inclinado hacia atrás.', 'Tira hasta que las manos lleguen al pecho y junta las escápulas.'],
+    up: ['Pies más cerca del anclaje.', 'Pausa de 1 segundo arriba.', 'Ponerte el chaleco.']
+  },
+  'pica': {
+    n: 'Flexión en pica con pies elevados', m: ['Hombro delantero', 'Tríceps'], t: 'reps', load: 'Peso corporal', kg: 0,
+    how: ['Pies en una silla y cadera alta, formando una V invertida.', 'Baja la cabeza entre las manos.', 'Empuja hasta estirar los brazos.'],
+    up: ['Silla más alta.', 'Manos sobre libros para bajar más.', 'Ponerte el chaleco.']
+  },
+  'dominada-asistida': {
+    n: 'Dominada asistida con TRX', m: ['Dorsal', 'Bíceps'], t: 'reps', trx: 'Corto', load: 'Peso corporal', kg: 0,
+    how: ['De rodillas o sentado justo debajo del anclaje, brazos estirados hacia arriba.', 'Tira llevando los codos hacia las costillas.', 'Ayúdate con las piernas lo menos posible.'],
+    up: ['Menos ayuda de las piernas.', 'Bajar en 3 segundos.']
+  },
+  'face-pull': {
+    n: 'Face pull con TRX', m: ['Hombro posterior', 'Trapecio'], t: 'reps', trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['Palmas hacia abajo y codos a la altura de los hombros.', 'Tira de las asas hacia la frente separando las manos.', 'Aprieta atrás 1 segundo.'],
+    up: ['Pies más cerca del anclaje.', 'Pausa de 2 segundos atrás.']
+  },
+  'curl-trx': {
+    n: 'Curl de bíceps con TRX', m: ['Bíceps'], t: 'reps', trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['Palmas hacia arriba y brazos estirados hacia el anclaje.', 'Codos quietos a la altura de los hombros.', 'Dobla solo los codos y lleva las manos a la frente.'],
+    up: ['Pies más cerca del anclaje.', 'A un brazo.']
+  },
+  'triceps-trx': {
+    n: 'Extensión de tríceps con TRX', m: ['Tríceps'], t: 'reps', trx: 'Largo', load: 'Peso corporal', kg: 0,
+    how: ['De espaldas al anclaje, inclinado hacia delante, brazos estirados delante.', 'Dobla los codos y lleva las manos a la frente sin bajar los codos.', 'Estira los brazos para volver.'],
+    up: ['Pies más atrás para inclinarte más.', 'Bajar en 3 segundos.']
+  },
+  'bulgara': {
+    n: 'Sentadilla búlgara con chaleco', m: ['Cuádriceps', 'Glúteo'], t: 'reps', side: true, heavy: true, load: 'Chaleco 10 kg', kg: 10,
+    how: ['Pie de atrás apoyado en una silla.', 'Baja en vertical hasta que la rodilla de atrás casi toque el suelo.', 'Peso en el talón de delante.'],
+    up: ['Pesas de 3 kg en las manos.', 'Bajar en 3 segundos y pausa abajo.']
+  },
+  'curl-femoral': {
+    n: 'Curl femoral con TRX', m: ['Isquiotibiales'], t: 'reps', trx: 'Largo (asas a un palmo del suelo)', load: 'Peso corporal', kg: 0,
+    how: ['Tumbado boca arriba en la esterilla, talones en las asas.', 'Sube la cadera.', 'Lleva los talones hacia el glúteo sin bajar la cadera.'],
+    up: ['A una pierna.', 'Bajar en 3 segundos.']
+  },
+  'laterales': {
+    n: 'Elevaciones laterales', m: ['Hombro lateral'], t: 'reps', load: 'Pesas 3 kg', kg: 3,
+    how: ['Codos un poco doblados.', 'Sube los brazos hasta la altura de los hombros.', 'Baja en 2–3 segundos, sin balancearte.'],
+    up: ['Pausa de 1 segundo arriba.', 'Al final, medias repeticiones hasta no poder más.']
+  },
+  'hip-thrust': {
+    n: 'Hip thrust a una pierna', m: ['Glúteo', 'Isquiotibiales'], t: 'reps', side: true, load: 'Chaleco 10 kg', kg: 10,
+    how: ['Espalda alta apoyada en el sofá y un pie en el suelo.', 'Sube la cadera hasta alinear rodilla, cadera y hombro.', 'Aprieta el glúteo 1 segundo arriba.'],
+    up: ['Chaleco sobre la cadera.', 'Pausa de 3 segundos arriba.']
+  },
+  'rodillas-pecho': {
+    n: 'Rodillas al pecho con TRX', m: ['Abdomen'], t: 'reps', trx: 'Largo (asas a un palmo del suelo)', load: 'Peso corporal', kg: 0,
+    how: ['Pies en las asas y manos en el suelo, en posición de flexión.', 'Lleva las rodillas al pecho.', 'No dejes que la espalda se hunda.'],
+    up: ['Con las piernas rectas, subiendo la cadera (pica).']
+  },
+  'gemelo': {
+    n: 'Gemelo a una pierna en escalón', m: ['Gemelos'], t: 'reps', side: true, load: 'Chaleco 10 kg + pesa 3 kg', kg: 13,
+    how: ['Punta del pie en el escalón y talón fuera.', 'Baja del todo y para 1 segundo abajo.', 'Sube lo más alto que puedas.'],
+    up: ['Pausa de 2 segundos abajo.', 'Subir rápido y bajar en 3 segundos.']
+  },
+  'superman': {
+    n: 'Superman', m: ['Zona lumbar', 'Glúteo'], t: 'reps', load: 'Peso corporal', kg: 0,
+    how: ['Boca abajo en la esterilla, brazos estirados delante.', 'Levanta el pecho y las piernas a la vez.', 'Aguanta 2 segundos arriba.'],
+    up: ['Aguantar 4 segundos arriba.', 'Pesas de 3 kg en las manos.']
+  },
+  'fondos': {
+    n: 'Fondos entre dos sillas con chaleco', m: ['Pecho bajo', 'Tríceps'], t: 'reps', load: 'Chaleco 10 kg', kg: 10,
+    how: ['Dos sillas firmes, apoyadas contra la pared, a la anchura de los hombros.', 'Inclina un poco el tronco hacia delante.', 'Baja hasta que los hombros queden a la altura de los codos.'],
+    up: ['Bajar en 3 segundos.', 'Pausa abajo.']
+  },
+  'remo-prono': {
+    n: 'Remo TRX con agarre prono', m: ['Espalda alta', 'Hombro posterior'], t: 'reps', trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['Palmas hacia abajo y codos abiertos.', 'Tira de las manos hacia el pecho.', 'Junta las escápulas arriba.'],
+    up: ['Pies más cerca del anclaje.', 'Ponerte el chaleco.']
+  },
+  'flexiones-elevadas': {
+    n: 'Flexiones con pies elevados y chaleco', m: ['Pecho alto', 'Hombro delantero'], t: 'reps', load: 'Chaleco 10 kg', kg: 10,
+    how: ['Pies en una silla y cuerpo recto.', 'Baja el pecho entre las manos.', 'Empuja hasta estirar los brazos.'],
+    up: ['Silla más alta.', 'Bajar en 3 segundos.']
+  },
+  'jalon': {
+    n: 'Jalón con brazos rectos en TRX', m: ['Dorsal'], t: 'reps', trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['De cara al anclaje, inclinado hacia atrás, brazos rectos delante.', 'Empuja las asas hacia las caderas sin doblar los brazos.', 'El cuerpo sube hasta quedar casi vertical.'],
+    up: ['Pies más cerca del anclaje.', 'Pausa de 1 segundo abajo.']
+  },
+  'y-raise': {
+    n: 'Elevación en Y con TRX', m: ['Hombro posterior', 'Trapecio bajo'], t: 'reps', trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['Brazos rectos delante, palmas hacia abajo.', 'Abre los brazos en forma de Y por encima de la cabeza.', 'El cuerpo sube con los brazos rectos.'],
+    up: ['Pies más cerca del anclaje.', 'Pausa de 2 segundos arriba.']
+  },
+  'diamante': {
+    n: 'Flexiones diamante', m: ['Tríceps', 'Pecho'], t: 'reps', load: 'Peso corporal', kg: 0,
+    how: ['Manos juntas bajo el pecho formando un rombo.', 'Codos pegados al cuerpo.', 'Baja hasta tocar las manos con el pecho.'],
+    up: ['Ponerte el chaleco.', 'Bajar en 3 segundos.']
+  },
+  'pistol': {
+    n: 'Sentadilla a una pierna con TRX', m: ['Cuádriceps', 'Glúteo'], t: 'reps', side: true, heavy: true, trx: 'Medio', load: 'Peso corporal', kg: 0,
+    how: ['De cara al anclaje, agarrado a las asas, una pierna estirada delante.', 'Baja sentándote hacia atrás todo lo que puedas.', 'Usa los brazos solo para ayudarte a subir.'],
+    up: ['Menos ayuda de los brazos.', 'Ponerte el chaleco.']
+  },
+  'rdl': {
+    n: 'Peso muerto rumano a una pierna', m: ['Isquiotibiales', 'Glúteo', 'Zona lumbar'], t: 'reps', side: true, load: 'Chaleco 10 kg + pesas 3 kg', kg: 16,
+    how: ['Rodilla de apoyo un poco doblada.', 'Inclina el tronco con la espalda recta mientras la otra pierna va hacia atrás.', 'Baja hasta notar el estiramiento detrás del muslo y sube apretando el glúteo.'],
+    up: ['Bajar en 3 segundos.', 'Pausa abajo.']
+  },
+  'zancada': {
+    n: 'Zancada hacia atrás con chaleco', m: ['Cuádriceps', 'Glúteo'], t: 'reps', side: true, load: 'Chaleco 10 kg', kg: 10,
+    how: ['Da un paso largo hacia atrás.', 'Baja hasta que la rodilla de atrás casi toque el suelo.', 'Empuja con el talón de delante para volver.'],
+    up: ['Pesas de 3 kg en las manos.', 'Pie de delante sobre un libro (déficit).']
+  },
+  'plancha': {
+    n: 'Plancha', m: ['Abdomen'], t: 'time', load: 'Peso corporal', kg: 0,
+    how: ['Antebrazos en la esterilla y codos bajo los hombros.', 'Cuerpo recto.', 'Aprieta glúteo y abdomen todo el rato.'],
+    up: ['Ponerte el chaleco.', 'Pies en las asas del TRX.']
+  },
+  'hollow': {
+    n: 'Hollow hold', m: ['Abdomen'], t: 'time', load: 'Peso corporal', kg: 0,
+    how: ['Boca arriba, con la zona lumbar pegada al suelo.', 'Brazos y piernas estirados y separados del suelo.', 'Si cuesta, dobla las rodillas.'],
+    up: ['Brazos y piernas más bajos.', 'Pesas de 3 kg en las manos.']
+  }
+};
+
+/* ============================================================
+   SESIONES
+   Cada bloque es un ejercicio solo o una superserie de dos.
+   r: rango de repeticiones (o de segundos si el ejercicio es 'time').
+   ============================================================ */
+const SESSIONS = {
+  TA: { n: 'Torso A', kind: 'torso', blocks: [
+    [{ ex: 'flexiones', sets: 4, r: [8, 15] }, { ex: 'remo-neutro', sets: 4, r: [8, 15] }],
+    [{ ex: 'pica', sets: 3, r: [6, 12] }, { ex: 'dominada-asistida', sets: 3, r: [8, 12] }],
+    [{ ex: 'face-pull', sets: 3, r: [12, 20] }],
+    [{ ex: 'curl-trx', sets: 3, r: [10, 15] }, { ex: 'triceps-trx', sets: 3, r: [10, 15] }]
+  ]},
+  PA: { n: 'Pierna A', kind: 'pierna', blocks: [
+    [{ ex: 'bulgara', sets: 4, r: [8, 12] }],
+    [{ ex: 'curl-femoral', sets: 3, r: [8, 15] }, { ex: 'laterales', sets: 3, r: [15, 25] }],
+    [{ ex: 'hip-thrust', sets: 3, r: [10, 15] }, { ex: 'rodillas-pecho', sets: 3, r: [10, 15] }],
+    [{ ex: 'gemelo', sets: 4, r: [12, 20] }, { ex: 'superman', sets: 4, r: [10, 15] }]
+  ]},
+  TB: { n: 'Torso B', kind: 'torso', blocks: [
+    [{ ex: 'fondos', sets: 4, r: [8, 15] }, { ex: 'remo-prono', sets: 4, r: [8, 15] }],
+    [{ ex: 'flexiones-elevadas', sets: 3, r: [8, 15] }, { ex: 'jalon', sets: 3, r: [10, 15] }],
+    [{ ex: 'y-raise', sets: 3, r: [12, 15] }],
+    [{ ex: 'curl-trx', sets: 3, r: [10, 15] }, { ex: 'diamante', sets: 3, r: [10, 15] }]
+  ]},
+  PB: { n: 'Pierna B', kind: 'pierna', blocks: [
+    [{ ex: 'pistol', sets: 4, r: [6, 12] }],
+    [{ ex: 'rdl', sets: 3, r: [10, 15] }, { ex: 'laterales', sets: 3, r: [15, 25] }],
+    [{ ex: 'zancada', sets: 3, r: [10, 15] }, { ex: 'plancha', sets: 3, r: [30, 60] }],
+    [{ ex: 'gemelo', sets: 4, r: [12, 20] }, { ex: 'hollow', sets: 4, r: [20, 40] }]
+  ]}
+};
+const ROTATION = ['TA', 'PA', 'TB', 'PB'];
+
+// Descansos por defecto, en segundos. Se podrán cambiar en Ajustes (fase 5).
+const REST = { pair: 30, round: 90, heavy: 120, single: 60, block: 90 };
+const LETTERS = 'ABCDEFGH';
+
+/* ============================================================
+   ESTADO (se guarda en este móvil)
+   ============================================================ */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('fj.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('fj.' + k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }
+};
+const TABS = ['hoy', 'plan', 'calendario', 'guia'];
+const hashTab = (location.hash || '').replace('#', '');
+const state = {
+  tab: TABS.includes(hashTab) ? hashTab : store.get('tab', 'hoy'),
+  planSession: ROTATION.includes(store.get('planSession')) ? store.get('planSession') : 'TA',
+  calMonth: null,  // [año, mes 0–11] que enseña el calendario
+  calSel: null,    // día elegido en el calendario, 'AAAA-MM-DD'
+  armed: null,     // botón «Quitar» esperando el segundo toque
+  openEx: new Set() // ejercicios abiertos en Plan, para que sigan abiertos al repintar
+};
+if (!TABS.includes(state.tab)) state.tab = 'hoy';
+if (store.get('v') == null) store.set('v', 1);
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmtRest = (s) => s >= 60 && s % 60 === 0 ? (s / 60) + ' min' : s >= 60 ? Math.floor(s / 60) + ' min ' + (s % 60) + ' s' : s + ' s';
+
+// Texto del objetivo de un ejercicio dentro de una sesión: «8–15 reps por pierna», «30–60 s».
+function targetText(it) {
+  const e = EX[it.ex];
+  const r = it.r[0] + '–' + it.r[1];
+  return e.t === 'time' ? r + ' s' : r + ' reps' + (e.side ? ' por pierna' : '');
+}
+
+// Convierte una sesión en la lista de pasos en orden, con el descanso que va después de cada uno.
+// Las superseries salen intercaladas: A1 serie 1, A2 serie 1, A1 serie 2...
+function buildQueue(id, rest = REST) {
+  const steps = [];
+  SESSIONS[id].blocks.forEach((b, bi) => {
+    const rounds = Math.max(...b.map((it) => it.sets));
+    for (let set = 1; set <= rounds; set++) {
+      b.forEach((it, ii) => {
+        if (set > it.sets) return;
+        steps.push({ block: bi, pair: b.length > 1, slot: LETTERS[bi] + (b.length > 1 ? ii + 1 : ''), ex: it.ex, set, sets: it.sets, r: it.r });
+      });
+    }
+  });
+  steps.forEach((s, i) => {
+    const n = steps[i + 1];
+    if (!n) s.rest = 0;
+    else if (n.block !== s.block) s.rest = rest.block;
+    else if (s.pair) s.rest = n.set === s.set ? rest.pair : rest.round;
+    else s.rest = EX[s.ex].heavy ? rest.heavy : rest.single;
+  });
+  return steps;
+}
+
+// Minutos aproximados: 5 de calentamiento + series + descansos.
+function estimateMin(id) {
+  const q = buildQueue(id);
+  let sec = 300;
+  q.forEach((s) => {
+    const e = EX[s.ex];
+    const work = e.t === 'time' ? (s.r[0] + s.r[1]) / 2 : 40;
+    sec += (e.side ? work * 2 + 10 : work) + s.rest;
+  });
+  return Math.round(sec / 60 / 5) * 5;
+}
+
+const totalSets = (id) => SESSIONS[id].blocks.reduce((a, b) => a + b.reduce((x, it) => x + it.sets, 0), 0);
+
+/* ============================================================
+   FECHAS (siempre en hora local, nunca en UTC)
+   ============================================================ */
+const pad = (n) => String(n).padStart(2, '0');
+const ymd = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const todayStr = () => ymd(new Date());
+const parseYmd = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate() + n); return ymd(d); };
+const mondayOf = (s) => addDays(s, -((parseYmd(s).getDay() + 6) % 7));
+const fmtDay = (s, o = { weekday: 'long', day: 'numeric', month: 'long' }) => new Intl.DateTimeFormat('es-ES', o).format(parseYmd(s));
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+// «hoy», «ayer» o «lunes 6 de octubre».
+const relDay = (s) => s === todayStr() ? 'hoy' : s === addDays(todayStr(), -1) ? 'ayer' : fmtDay(s);
+
+/* ============================================================
+   HISTORIAL (fj.logs): la única fuente de verdad.
+   Calendario, «hoy toca» y «última vez» salen de aquí.
+   ============================================================ */
+const getLogs = () => { const l = store.get('logs', []); return Array.isArray(l) ? l : []; };
+const saveLogs = (l) => store.set('logs', l);
+// Orden: por día y, dentro del día, por momento en que se apuntó.
+const byWhen = (a, b) => a.date.localeCompare(b.date) || (a.t || 0) - (b.t || 0);
+
+function addLog(session, date, extra = {}) {
+  const l = getLogs();
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  l.push({ id, date, session, source: 'manual', t: Date.now(), sets: [], ...extra });
+  saveLogs(l);
+  return id;
+}
+function removeLog(id) { saveLogs(getLogs().filter((x) => x.id !== id)); }
+const logsOn = (date) => getLogs().filter((x) => x.date === date).sort(byWhen);
+const lastOf = (session) => getLogs().filter((x) => x.session === session).sort(byWhen).pop() || null;
+
+// La sesión que toca: la siguiente a la última hecha. Sin historial, la primera.
+function nextSession() {
+  const last = getLogs().sort(byWhen).pop();
+  if (!last) return ROTATION[0];
+  return ROTATION[(ROTATION.indexOf(last.session) + 1) % ROTATION.length];
+}
+
+/* ============================================================
+   ÚLTIMA VEZ, PRÓXIMA VEZ Y PROGRESIÓN
+   «Última vez» sale del historial. «Próxima vez» se calcula de la última
+   vez con la regla del plan, salvo que la hayas cambiado a mano después
+   (fj.targets). Si borras un día del calendario, todo se recalcula.
+   ============================================================ */
+// Series y rango de cada ejercicio. Son iguales en todas las sesiones donde sale.
+const EX_PLAN = {};
+Object.values(SESSIONS).forEach((S) => S.blocks.forEach((b) => b.forEach((it) => { if (!EX_PLAN[it.ex]) EX_PLAN[it.ex] = { sets: it.sets, r: it.r }; })));
+const isTime = (ex) => EX[ex].t === 'time';
+const stepOf = (ex) => isTime(ex) ? 5 : 1;
+// Valor de una serie: repeticiones, o segundos si el ejercicio es por tiempo.
+const valOf = (ex, set) => isTime(ex) ? set.sec : set.reps;
+const fmtKg = (k) => k ? k + ' kg' : 'sin peso';
+const unit = (ex) => isTime(ex) ? 's' : 'reps';
+
+function lastPerf(ex) {
+  const logs = getLogs().sort(byWhen).reverse();
+  for (const l of logs) {
+    const ss = (l.sets || []).filter((x) => x.ex === ex && valOf(ex, x) != null);
+    if (ss.length) return { date: l.date, t: l.end || l.t, sets: ss };
+  }
+  return null;
+}
+
+// Regla: +1 repetición (o +5 s) por serie hasta el máximo del rango.
+// Si todas las series llegaron al máximo, toca subir dificultad.
+function autoTarget(ex) {
+  const P = EX_PLAN[ex], step = stepOf(ex);
+  const last = lastPerf(ex);
+  if (!last) {
+    const mid = Math.round((P.r[0] + P.r[1]) / 2 / step) * step;
+    return { reps: Array(P.sets).fill(mid), kg: EX[ex].kg, up: false, manual: false };
+  }
+  const vals = last.sets.map((x) => valOf(ex, x));
+  const reps = Array.from({ length: P.sets }, (_, i) => vals[i] != null ? vals[i] : vals[vals.length - 1]);
+  const up = vals.length >= P.sets && vals.every((v) => v >= P.r[1]);
+  const kg = last.sets[last.sets.length - 1].kg;
+  return { reps: up ? reps : reps.map((v) => Math.min(v + step, P.r[1])), kg: kg != null ? kg : EX[ex].kg, up, manual: false };
+}
+
+function targetOf(ex) {
+  const ov = (store.get('targets', {}) || {})[ex];
+  const last = lastPerf(ex);
+  if (ov && (!last || ov.t > last.t)) return { reps: ov.reps.slice(), kg: ov.kg, up: false, manual: true };
+  return autoTarget(ex);
+}
+function setTarget(ex, tg) {
+  const all = store.get('targets', {}) || {};
+  all[ex] = { reps: tg.reps, kg: tg.kg, t: Date.now() };
+  store.set('targets', all);
+}
+function resetTarget(ex) {
+  const all = store.get('targets', {}) || {};
+  delete all[ex]; store.set('targets', all);
+}
+const noteOf = (ex) => ((store.get('notes', {}) || {})[ex] || '');
+function setNote(ex, txt) {
+  const all = store.get('notes', {}) || {};
+  if (txt.trim()) all[ex] = txt.trim(); else delete all[ex];
+  store.set('notes', all);
+}
+const joinVals = (arr) => arr.join(' · ');
+
+// Sesiones de esta semana (lunes a domingo) y semanas seguidas con al menos una sesión.
+// Si esta semana aún no has entrenado, la racha cuenta desde la semana pasada.
+function weekStats() {
+  const logs = getLogs();
+  const thisWeek = mondayOf(todayStr());
+  const weeks = new Set(logs.map((x) => mondayOf(x.date)));
+  let w = weeks.has(thisWeek) ? thisWeek : addDays(thisWeek, -7);
+  let streak = 0;
+  while (weeks.has(w)) { streak++; w = addDays(w, -7); }
+  return { week: logs.filter((x) => mondayOf(x.date) === thisWeek).length, streak };
+}
+
+/* ============================================================
+   PINTAR
+   ============================================================ */
+const TITLES = {
+  hoy: ['Hoy', 'Tu próxima sesión de la rotación'],
+  plan: ['Plan', ''],
+  calendario: ['Calendario', 'Los días que has entrenado'],
+  guia: ['Guía', 'Reglas del plan y ajustes']
+};
+
+function sessionSeg() {
+  return `<div class="seg" role="group" aria-label="Sesión">${ROTATION.map((id) =>
+    `<button data-session="${id}" aria-pressed="${state.planSession === id}">${esc(SESSIONS[id].n)}</button>`).join('')}</div>`;
+}
+
+function sessionMeta(id) {
+  return `${SESSIONS[id].blocks.length} bloques · ${totalSets(id)} series · ~${estimateMin(id)} min`;
+}
+
+function renderTop() {
+  let [t, sub] = TITLES[state.tab];
+  if (state.tab === 'plan') sub = sessionMeta(state.planSession);
+  $('#top').innerHTML = `<div class="eyebrow">FitJan</div><h1>${esc(t)}</h1>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}${state.tab === 'plan' ? `<div class="top-seg">${sessionSeg()}</div>` : ''}`;
+}
+
+const CHECK = '<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+// Etiqueta corta de color: TA, PA, TB, PB. Torso en naranja, pierna en verde azulado.
+const tag = (id) => `<span class="tag ${SESSIONS[id].kind}">${id}</span>`;
+
+// Botón «Quitar» con confirmación: el primer toque lo arma, el segundo borra.
+function delBtn(logId) {
+  const on = state.armed === logId;
+  return `<button class="del${on ? ' on' : ''}" data-del="${logId}">${on ? '¿Seguro? Toca otra vez' : 'Quitar'}</button>`;
+}
+
+// Tarjeta para marcar una sesión como hecha hoy, o quitarla si ya lo está.
+function markBox(id, ghost) {
+  const done = logsOn(todayStr()).filter((x) => x.session === id);
+  const last = lastOf(id);
+  const lastTxt = last ? 'Última vez: ' + relDay(last.date) : 'Aún no la has hecho';
+  if (done.length) {
+    return `<div class="mark is-done">
+      <div class="mark-row"><span class="done-ic">${CHECK}</span><div><strong>Hecha hoy</strong><div class="s">Se ha apuntado en el calendario</div></div>${delBtn(done[done.length - 1].id)}</div>
+    </div>`;
+  }
+  return `<div class="mark">
+    <button class="btn${ghost ? ' ghost' : ''}" data-mark="${id}">${CHECK}${ghost ? 'Marcar hecha sin la app' : 'Marcar como hecha hoy'}</button>
+    <div class="mark-foot"><span class="s">${esc(lastTxt)}</span><button class="link" data-pick="${id}">Otro día…</button></div>
+  </div>`;
+}
+
+function renderHoy() {
+  const id = nextSession();
+  const S = SESSIONS[id];
+  const today = logsOn(todayStr());
+  const rows = S.blocks.map((b, bi) => `<li><span class="l">${LETTERS[bi]}</span><span>${b.map((it) => esc(EX[it.ex].n)).join(' + ')}</span><span class="s">${b[0].sets} series</span></li>`).join('');
+  const doneBox = today.length ? `<div class="card done-today">
+      <div class="k">Hoy has entrenado</div>
+      ${today.map((x) => `<div class="mark-row"><span class="done-ic">${CHECK}</span><div><strong>${esc(SESSIONS[x.session].n)}</strong></div>${delBtn(x.id)}</div>`).join('')}
+    </div>` : '';
+  $('#v-hoy').innerHTML = `${doneBox}
+    <div class="card today">
+      <div>
+        <div class="k">${today.length ? 'Próxima sesión' : 'Hoy toca'}</div>
+        <h2 class="name">${esc(S.n)}</h2>
+      </div>
+      <div class="meta"><span class="bdg">${S.blocks.length} bloques</span><span class="bdg">${totalSets(id)} series</span><span class="bdg">~${estimateMin(id)} min</span></div>
+      ${startBtn(id)}
+      <ul class="blist">${rows}</ul>
+      ${today.length ? '' : markBox(id, true)}
+      <button class="link" data-open="${id}">Ver la sesión completa</button>
+    </div>
+    <h3 class="h2">Rotación</h3>
+    <p class="lede">Haz las sesiones en este orden, en los días que puedas. Torso y pierna se alternan, así nunca repites músculo dos días seguidos.</p>
+    <div class="rot" aria-label="Rotación">${ROTATION.map((r) => `<span class="${r === id ? 'on' : ''}">${esc(SESSIONS[r].n)}</span>`).join('')}</div>`;
+}
+
+function exItem(it, slot) {
+  const e = EX[it.ex];
+  const q = encodeURIComponent(e.n + ' ejercicio técnica');
+  const tg = targetOf(it.ex);
+  const last = lastPerf(it.ex);
+  const sets = tg.reps.map((v, i) => `<div class="mst"><span>S${i + 1}</span><button class="stp-b" data-tadj="${it.ex}:${i}:-1" aria-label="Menos en la serie ${i + 1}">−</button><b>${v}</b><button class="stp-b" data-tadj="${it.ex}:${i}:1" aria-label="Más en la serie ${i + 1}">+</button></div>`).join('');
+  return `<details class="ex" data-ex="${it.ex}"${state.openEx.has(it.ex) ? ' open' : ''}>
+    <summary><span class="slot">${slot}</span><div><div class="ex-n">${esc(e.n)}</div><div class="ex-s">${targetText(it)} · ${esc(e.load)}</div>
+      <div class="ex-s">Próxima: <b class="ink">${joinVals(tg.reps)}</b> ${unit(it.ex)} · ${fmtKg(tg.kg)}${tg.up ? ' · <span class="upt">sube dificultad</span>' : ''}</div></div></summary>
+    <div class="ex-body">
+      <div class="tgt">
+        <h4>Próxima vez ${tg.manual ? '<span class="bdg">cambiada a mano</span>' : ''}</h4>
+        <div class="tgt-sets">${sets}</div>
+        <div class="tgt-kg">${`<div class="mst"><span>Kg</span><button class="stp-b" data-tadj="${it.ex}:kg:-1" aria-label="Menos kg">−</button><b>${tg.kg}</b><button class="stp-b" data-tadj="${it.ex}:kg:1" aria-label="Más kg">+</button></div>`}
+          ${tg.manual ? `<button class="link" data-treset="${it.ex}">Volver al cálculo automático</button>` : ''}</div>
+        <div class="s">${last ? `Última vez (${esc(relDay(last.date))}): ${joinVals(last.sets.map((x) => valOf(it.ex, x)))} ${unit(it.ex)} · ${fmtKg(last.sets[last.sets.length - 1].kg)}` : 'Aún no hay registros. El objetivo es el centro del rango.'}</div>
+        ${tg.up ? `<div class="upb">Llegaste al máximo en todas las series. Sube dificultad: ${esc(e.up[0])}</div>` : ''}
+      </div>
+      <label class="note"><h4>Nota</h4><textarea data-note="${it.ex}" rows="2" placeholder="Ej.: pies a 2 pasos del anclaje">${esc(noteOf(it.ex))}</textarea></label>
+      <div class="chips">${e.m.map((m) => `<span class="bdg acc">${esc(m)}</span>`).join('')}${e.trx ? `<span class="bdg">TRX: ${esc(e.trx)}</span>` : ''}</div>
+      <div><h4>Cómo se hace</h4><ol>${e.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ol></div>
+      <div><h4>Para subir dificultad</h4><ul>${e.up.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></div>
+      <a class="vid" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">Ver vídeo<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+    </div>
+  </details>`;
+}
+
+function blockRest(b) {
+  if (b.length > 1) return `descanso ${fmtRest(REST.pair)} entre ejercicios · ${fmtRest(REST.round)} por vuelta`;
+  return 'descanso ' + fmtRest(EX[b[0].ex].heavy ? REST.heavy : REST.single);
+}
+
+function renderPlan() {
+  const S = SESSIONS[state.planSession];
+  $('#v-plan').innerHTML = `<div class="card mark-card">${startBtn(state.planSession)}${markBox(state.planSession, true)}</div>` + S.blocks.map((b, bi) => `
+    <div class="card block">
+      <div class="bhead"><span class="bletter">${LETTERS[bi]}</span><div><strong>${b.length > 1 ? 'Superserie' : 'Ejercicio solo'} · ${b[0].sets} series</strong><div class="s">${blockRest(b)}</div></div></div>
+      ${b.map((it, ii) => exItem(it, LETTERS[bi] + (b.length > 1 ? ii + 1 : ''))).join('')}
+    </div>`).join('') +
+    `<p class="lede">Toca un ejercicio para ver la técnica. Termina cada serie cuando te queden 1–2 repeticiones en reserva.</p>`;
+}
+
+function emptyView(icon, title, text) {
+  return `<div class="card empty">${icon}<strong>${esc(title)}</strong><p>${esc(text)}</p></div>`;
+}
+
+const MONTH = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' });
+
+function renderCalendario() {
+  const today = todayStr();
+  if (!state.calSel) state.calSel = today;
+  if (!state.calMonth) { const d = parseYmd(state.calSel); state.calMonth = [d.getFullYear(), d.getMonth()]; }
+  const [y, m] = state.calMonth;
+  const first = new Date(y, m, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(y, m + 1, 0).getDate();
+  const byDay = {};
+  getLogs().sort(byWhen).forEach((x) => { (byDay[x.date] = byDay[x.date] || []).push(x.session); });
+
+  let cells = '<span class="blank"></span>'.repeat(offset);
+  for (let d = 1; d <= days; d++) {
+    const k = ymd(new Date(y, m, d));
+    const ss = byDay[k] || [];
+    const cls = ['day', k === today ? 'is-today' : '', k === state.calSel ? 'is-sel' : '', k > today ? 'is-future' : '', ss.length ? 'has' : ''].filter(Boolean).join(' ');
+    const label = cap(fmtDay(k)) + (ss.length ? ', ' + ss.map((s) => SESSIONS[s].n).join(' y ') : '');
+    cells += `<button class="${cls}" data-day="${k}" aria-label="${esc(label)}" aria-pressed="${k === state.calSel}"><span class="dn">${d}</span>${ss.slice(0, 2).map(tag).join('')}</button>`;
+  }
+
+  const st = weekStats();
+  const sel = state.calSel;
+  const entries = logsOn(sel);
+  const list = entries.length
+    ? `<ul class="entries">${entries.map((x) => `<li>${tag(x.session)}<div><strong>${esc(SESSIONS[x.session].n)}</strong><div class="s">${x.sets && x.sets.length ? x.sets.length + ' series apuntadas' : 'Marcada a mano'}</div></div>${delBtn(x.id)}</li>`).join('')}</ul>`
+    : `<p class="lede">${sel > today ? 'Este día todavía no ha llegado.' : 'No entrenaste este día.'}</p>`;
+  const add = sel > today ? '' : `<div class="add"><div class="k">Añadir sesión este día</div><div class="add-grid">${ROTATION.map((id) => `<button class="chip" data-add="${id}">${tag(id)}${esc(SESSIONS[id].n)}</button>`).join('')}</div></div>`;
+
+  $('#v-calendario').innerHTML = `
+    <div class="stats">
+      <div class="card stat"><b>${st.week}</b><span>${st.week === 1 ? 'sesión' : 'sesiones'} esta semana</span></div>
+      <div class="card stat"><b>${st.streak}</b><span>${st.streak === 1 ? 'semana seguida' : 'semanas seguidas'}</span></div>
+    </div>
+    <div class="card cal">
+      <div class="cal-head">
+        <button class="nav" data-month="-1" aria-label="Mes anterior"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <strong>${esc(cap(MONTH.format(first)))}</strong>
+        <button class="nav" data-month="1" aria-label="Mes siguiente"><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="wk" aria-hidden="true"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div class="grid">${cells}</div>
+      <div class="legend"><span>${tag('TA')} Torso</span><span>${tag('PA')} Pierna</span>${sel !== today ? '<button class="link" data-day="' + today + '">Ir a hoy</button>' : ''}</div>
+    </div>
+    <div class="card sel-day">
+      <h3 class="h2">${esc(cap(fmtDay(sel)))}</h3>
+      ${list}
+      ${add}
+    </div>`;
+}
+
+function renderGuia() {
+  $('#v-guia').innerHTML = emptyView('<svg viewBox="0 0 24 24"><path d="M5 4.5h10.5a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10.5M9 8.5h6"/></svg>',
+    'Llega en la fase 5', 'Aquí estarán la progresión, los descansos, la comida, los ajustes y la copia de seguridad.');
+}
+
+function render() {
+  TABS.forEach((t) => { $('#v-' + t).hidden = t !== state.tab; });
+  document.querySelectorAll('[data-tab]').forEach((b) => {
+    if (b.dataset.tab === state.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  renderTop();
+  ({ hoy: renderHoy, plan: renderPlan, calendario: renderCalendario, guia: renderGuia })[state.tab]();
+}
+
+/* ============================================================
+   ENTRENAMIENTO EN MARCHA
+   Toda la sesión es una cola de pasos (buildQueue). El estado guarda
+   en qué paso estás, si trabajas o descansas y la HORA en que empezó
+   la serie o acaba el descanso. Los relojes se calculan con Date.now(),
+   nunca restando segundos, porque el móvil frena los temporizadores
+   cuando la pantalla se apaga o cambias de app.
+   ============================================================ */
+let live = store.get('live', null);
+if (live && !SESSIONS[live.session]) live = null;
+let liveQ = live ? buildQueue(live.session) : null;
+const liveUI = { menu: false, exit: false, how: false, discard: false };
+let liveTick = null, wakeLock = null, audio = null, lastBeep = null;
+
+const now = () => Date.now();
+const saveLive = () => store.set('live', live);
+const liveOn = () => !!live && live.phase !== 'done';
+// Reloj m:ss. La cuenta atrás redondea hacia arriba para no enseñar 0:00 antes de tiempo.
+const clock = (ms, up) => { const s = Math.max(0, up ? Math.ceil(ms / 1000) : Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + pad(s % 60); };
+
+// Siguiente paso que no se ha saltado, o -1 si no queda ninguno.
+function nextIdx(from) {
+  for (let j = from + 1; j < liveQ.length; j++) if (!live.skip.includes(j)) return j;
+  return -1;
+}
+// El paso que enseña la pantalla: en el descanso, el que viene.
+const shownIdx = () => live.phase === 'rest' ? nextIdx(live.i) : live.i;
+
+/* Sonido y vibración ------------------------------------------------ */
+function unlockAudio() {
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    if (audio.state === 'suspended') audio.resume();
+  } catch (e) { audio = null; }
+}
+function tone(freq, ms) {
+  if (!audio) return;
+  try {
+    const o = audio.createOscillator(), g = audio.createGain(), t0 = audio.currentTime;
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.5, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + ms / 1000);
+    o.connect(g).connect(audio.destination);
+    o.start(t0); o.stop(t0 + ms / 1000 + 0.05);
+  } catch (e) { /* sin audio */ }
+}
+const vib = (p) => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { /* sin vibración */ } };
+// 'tick': pitido corto (3, 2, 1). 'go': pitido largo, empieza la serie.
+function signal(kind) {
+  if (kind === 'tick') { tone(880, 150); vib(70); } else { tone(1320, 500); vib([220, 90, 220]); }
+}
+
+/* Pantalla encendida ------------------------------------------------ */
+async function requestWake() {
+  if (!('wakeLock' in navigator) || wakeLock || document.hidden || !liveOn()) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch (e) { wakeLock = null; }
+}
+function releaseWake() { try { if (wakeLock) wakeLock.release(); } catch (e) { /* ya liberado */ } wakeLock = null; }
+
+/* Abrir y cerrar ---------------------------------------------------- */
+function startLive(id) {
+  live = { session: id, startedAt: null, i: 0, phase: 'ready', phaseAt: null, restEndsAt: null, pausedLeft: null, restTotal: 0, goalBeep: null, done: [], skip: [] };
+  liveQ = buildQueue(id);
+  saveLive();
+  openLive();
+}
+function openLive() {
+  Object.assign(liveUI, { menu: false, exit: false, how: false, discard: false });
+  $('#live').hidden = false;
+  document.body.classList.add('lock');
+  try { if (!(history.state && history.state.fjLive)) history.pushState({ fjLive: 1 }, '', location.hash); } catch (e) { /* sin historial */ }
+  renderLive();
+  clearInterval(liveTick);
+  liveTick = setInterval(tickLive, 250);
+  requestWake();
+}
+function closeLive() {
+  clearInterval(liveTick); liveTick = null;
+  releaseWake();
+  live = null; liveQ = null; store.set('live', null);
+  $('#live').hidden = true; $('#live').innerHTML = '';
+  document.body.classList.remove('lock');
+  try { if (history.state && history.state.fjLive) history.back(); } catch (e) { /* sin historial */ }
+  render();
+}
+
+/* Cambios de estado ------------------------------------------------- */
+function toWork(i, at) {
+  Object.assign(live, { i, phase: 'work', phaseAt: at, restEndsAt: null, pausedLeft: null, goalBeep: null });
+  liveUI.how = false;
+  saveLive(); renderLive();
+}
+function beginSet() {
+  const t = now();
+  if (!live.startedAt) live.startedAt = t;
+  toWork(live.i, t);
+  requestWake();
+}
+function finishSet() {
+  const t = now(), s = liveQ[live.i];
+  // La serie se apunta con el objetivo ya puesto. Si en esta sesión ya cambiaste los kg, se mantienen.
+  const tg = targetOf(s.ex);
+  const prev = live.done.filter((d) => d.ex === s.ex).pop();
+  live.done.push({
+    i: live.i, ex: s.ex, n: s.set, sec: Math.round((t - live.phaseAt) / 1000), start: live.phaseAt, end: t,
+    reps: isTime(s.ex) ? null : (tg.reps[s.set - 1] != null ? tg.reps[s.set - 1] : tg.reps[tg.reps.length - 1]),
+    kg: prev ? prev.kg : tg.kg
+  });
+  const n = nextIdx(live.i);
+  if (n < 0) return completeLive();
+  const ms = s.rest * 1000;
+  if (ms <= 0) return toWork(n, t);
+  Object.assign(live, { phase: 'rest', restTotal: ms, restEndsAt: t + ms, pausedLeft: null });
+  lastBeep = null;
+  saveLive(); renderLive();
+}
+function restDone(at) {
+  toWork(nextIdx(live.i), at);
+  signal('go');
+}
+function pauseRest() {
+  live.pausedLeft = Math.max(0, live.restEndsAt - now()); live.restEndsAt = null;
+  saveLive(); renderLive();
+}
+function resumeRest() {
+  live.restEndsAt = now() + live.pausedLeft; live.pausedLeft = null; lastBeep = null;
+  saveLive(); renderLive();
+}
+function addRest(ms) {
+  if (live.pausedLeft != null) live.pausedLeft += ms; else live.restEndsAt += ms;
+  live.restTotal += ms; lastBeep = null;
+  saveLive(); renderLive();
+}
+// «Deshacer»: vuelve a la serie que acabas de marcar, con su cronómetro intacto.
+function undoSet() {
+  const last = live.done.pop();
+  if (!last) return;
+  Object.assign(live, { i: last.i, phase: 'work', phaseAt: last.start, restEndsAt: null, pausedLeft: null });
+  saveLive(); renderLive();
+}
+// Saltar una serie o un ejercicio entero. En el descanso se salta lo que viene.
+function skip(all) {
+  const target = shownIdx();
+  const s = liveQ[target];
+  liveQ.forEach((q, j) => {
+    if (j === target || (all && j > target && q.ex === s.ex && q.block === s.block)) if (!live.skip.includes(j)) live.skip.push(j);
+  });
+  liveUI.menu = false;
+  if (live.phase === 'rest') {
+    if (nextIdx(live.i) < 0) return completeLive();
+    saveLive(); return renderLive();
+  }
+  const n = nextIdx(live.i);
+  if (n < 0) return completeLive();
+  Object.assign(live, { i: n, phase: 'ready', phaseAt: null });
+  saveLive(); renderLive();
+}
+// Fin: guarda en el historial (si hay alguna serie hecha) y enseña el resumen.
+function completeLive() {
+  const t = now();
+  liveUI.menu = false; liveUI.exit = false;
+  if (!live.done.length) return closeLive();
+  const start = live.startedAt || t;
+  const logId = addLog(live.session, ymd(new Date(start)), { source: 'live', start, end: t, sets: liveSets() });
+  Object.assign(live, { phase: 'done', endedAt: t, logId });
+  saveLive();
+  releaseWake();
+  renderLive();
+}
+
+const liveSets = () => live.done.map((d) => ({ ex: d.ex, n: d.n, sec: d.sec, reps: d.reps, kg: d.kg }));
+
+// Corrige reps, segundos o kg de la última serie. En el resumen también corrige lo guardado.
+function adjustLast(field, dir) {
+  const d = live.done[live.done.length - 1];
+  if (!d) return;
+  const step = field === 'sec' ? 5 : 1;
+  d[field] = Math.max(0, (d[field] || 0) + dir * step);
+  if (live.phase === 'done' && live.logId) {
+    const l = getLogs();
+    const log = l.find((x) => x.id === live.logId);
+    if (log) { log.sets = liveSets(); saveLogs(l); }
+  }
+  saveLive(); renderLive();
+}
+
+/* Reloj ------------------------------------------------------------- */
+function tickLive() {
+  if (!liveOn()) return;
+  const t = now();
+  if (live.phase === 'rest' && live.restEndsAt != null) {
+    const left = live.restEndsAt - t;
+    if (left <= 0) return restDone(live.restEndsAt);
+    const sec = Math.ceil(left / 1000);
+    if (sec <= 3 && sec !== lastBeep) { lastBeep = sec; signal('tick'); }
+  }
+  if (live.phase === 'work') {
+    const s = liveQ[live.i];
+    // En los ejercicios por tiempo, un pitido al llegar al mínimo del rango.
+    if (EX[s.ex].t === 'time' && live.goalBeep !== live.i && t - live.phaseAt >= s.r[0] * 1000) {
+      live.goalBeep = live.i; saveLive(); signal('tick');
+    }
+  }
+  paintClock(t);
+}
+const RING = 2 * Math.PI * 104;
+function paintClock(t) {
+  const c = $('#lv-clock'); if (!c) return;
+  if (live.phase === 'work') c.textContent = clock(t - live.phaseAt);
+  if (live.phase === 'rest') {
+    const left = live.pausedLeft != null ? live.pausedLeft : live.restEndsAt - t;
+    c.textContent = clock(left, true);
+    const r = $('#lv-ring');
+    if (r) r.style.strokeDashoffset = String(RING * (1 - Math.max(0, Math.min(1, left / live.restTotal))));
+  }
+  const tot = $('#lv-total');
+  if (tot && live.startedAt) tot.textContent = clock(t - live.startedAt);
+}
+
+/* Pintar ------------------------------------------------------------ */
+// «Objetivo 13 reps · 10 kg» y «Última vez: 12 · 11 · 10».
+function goalLine(s) {
+  const tg = targetOf(s.ex);
+  const v = tg.reps[s.set - 1] != null ? tg.reps[s.set - 1] : tg.reps[tg.reps.length - 1];
+  const last = lastPerf(s.ex);
+  return `<div class="lv-goal">Objetivo <b>${v}</b> ${unit(s.ex)}${EX[s.ex].side && !isTime(s.ex) ? ' por pierna' : ''} · ${fmtKg(tg.kg)}</div>
+    ${last ? `<div class="s">Última vez: ${joinVals(last.sets.map((x) => valOf(s.ex, x)))} ${unit(s.ex)}</div>` : ''}
+    ${tg.up ? `<div class="upb">Sube dificultad: ${esc(EX[s.ex].up[0])}</div>` : ''}`;
+}
+
+function stepper(field, label, value) {
+  return `<div class="stp"><span class="stp-l">${label}</span>
+    <button class="stp-b" data-adj="${field}:-1" aria-label="Menos ${label}">−</button>
+    <b class="stp-v">${value}</b>
+    <button class="stp-b" data-adj="${field}:1" aria-label="Más ${label}">+</button></div>`;
+}
+// Lo que acabas de hacer, con su valor ya puesto y botones para corregirlo.
+function lastEditor(d, title, undo) {
+  const vf = isTime(d.ex) ? 'sec' : 'reps';
+  return `<div class="lv-last">
+    <div class="lv-last-h">
+      <span class="done-ic">${CHECK}</span>
+      <div><div class="s">${title}</div><strong>${esc(EX[d.ex].n)}</strong> · serie ${d.n}</div>
+      ${undo ? '<button class="del" data-lv="undo">Deshacer</button>' : ''}
+    </div>
+    <div class="stps">${stepper(vf, isTime(d.ex) ? 'Segundos' : 'Reps', d[vf] || 0)}${stepper('kg', 'Kg', d.kg || 0)}</div>
+  </div>`;
+}
+
+function exCard(i, label) {
+  const s = liveQ[i], e = EX[s.ex];
+  const partner = s.pair ? SESSIONS[live.session].blocks[s.block].find((it) => it.ex !== s.ex) : null;
+  const facts = [targetText(s), e.load, e.trx ? 'TRX: ' + e.trx : ''].filter(Boolean);
+  return `<div class="lv-ex">
+    <div class="lv-lab">${label}</div>
+    <div class="lv-name"><span class="slot">${s.slot}</span><h2>${esc(e.n)}</h2></div>
+    <div class="lv-set">Serie <b>${s.set}</b> de ${s.sets}</div>
+    ${goalLine(s)}
+    <div class="chips">${facts.map((f) => `<span class="bdg">${esc(f)}</span>`).join('')}</div>
+    ${noteOf(s.ex) ? `<p class="lv-note">${esc(noteOf(s.ex))}</p>` : ''}
+    ${e.side ? '<p class="lv-hint">Haz las dos piernas seguidas: eso es una serie.</p>' : ''}
+    ${partner ? `<p class="lv-hint">Superserie: alterna con ${esc(EX[partner.ex].n)}.</p>` : ''}
+    ${liveUI.how ? `<ol class="lv-how">${e.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ol>` : `<button class="link" data-lv="how">Ver técnica</button>`}
+  </div>`;
+}
+
+function renderLive() {
+  const el = $('#live');
+  if (!live) { el.hidden = true; return; }
+  const S = SESSIONS[live.session];
+  if (live.phase === 'done') { el.innerHTML = summaryHtml(); return; }
+
+  const total = liveQ.length - live.skip.length;
+  const doneN = live.done.length;
+  const paused = live.phase === 'rest' && live.pausedLeft != null;
+  const phaseTxt = { ready: 'Prepárate', work: 'En serie', rest: paused ? 'Pausa' : 'Descanso' }[live.phase];
+  const last = live.done[live.done.length - 1];
+  const t = now();
+
+  let center = '';
+  if (live.phase === 'rest') {
+    center = `<div class="lv-ring${paused ? ' paused' : ''}">
+      <svg viewBox="0 0 240 240" aria-hidden="true"><circle class="bg" cx="120" cy="120" r="104"/><circle id="lv-ring" class="fg" cx="120" cy="120" r="104" stroke-dasharray="${RING}" stroke-dashoffset="0"/></svg>
+      <div class="lv-clock" id="lv-clock" role="timer" aria-live="off">${clock(paused ? live.pausedLeft : live.restEndsAt - t, true)}</div>
+    </div>`;
+  } else if (live.phase === 'work') {
+    center = `<div class="lv-big"><div class="lv-clock" id="lv-clock" role="timer" aria-live="off">${clock(t - live.phaseAt)}</div></div>`;
+  } else {
+    center = `<div class="lv-big"><div class="lv-ready">${live.startedAt ? 'Cuando estés listo' : 'Calienta 5 minutos y empieza'}</div></div>`;
+  }
+
+  const lastRow = live.phase === 'rest' && last ? lastEditor(last, 'Acabas de hacer', true) : '';
+
+  let controls = '';
+  if (live.phase === 'ready') controls = `<button class="btn huge" data-lv="begin">Empezar serie</button>`;
+  if (live.phase === 'work') controls = `<button class="btn huge" data-lv="done">${CHECK}Hecho</button>`;
+  if (live.phase === 'rest') controls = `<div class="lv-row">
+      <button class="btn soft" data-lv="${paused ? 'resume' : 'pause'}">${paused ? 'Seguir' : 'Pausar'}</button>
+      <button class="btn soft" data-lv="plus">+15 s</button>
+      <button class="btn" data-lv="now">Empezar ya</button>
+    </div>`;
+
+  const sheet = liveUI.exit ? `<div class="lv-sheet" role="dialog" aria-label="Terminar">
+      <strong>¿Terminar el entrenamiento?</strong>
+      ${doneN ? `<button class="btn" data-lv="save">Terminar y guardar (${doneN} ${doneN === 1 ? 'serie' : 'series'})</button>` : ''}
+      <button class="del${liveUI.discard ? ' on' : ''} wide" data-lv="discard">${liveUI.discard ? '¿Seguro? Se pierde lo de hoy' : 'Salir sin guardar'}</button>
+      <button class="btn ghost" data-lv="stay">Seguir entrenando</button>
+    </div>` : liveUI.menu ? `<div class="lv-sheet" role="dialog" aria-label="Opciones">
+      <button class="btn ghost" data-lv="skipset">Saltar esta serie</button>
+      <button class="btn ghost" data-lv="skipex">Saltar el resto de este ejercicio</button>
+      <button class="btn ghost" data-lv="stay">Cerrar</button>
+    </div>` : '';
+
+  el.innerHTML = `<div class="lv-in">
+    <header class="lv-top">
+      <button class="nav" data-lv="exit" aria-label="Terminar"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="lv-title"><strong>${esc(S.n)}</strong><span class="s">${doneN} de ${total} series · <span id="lv-total">${live.startedAt ? clock(t - live.startedAt) : '0:00'}</span></span></div>
+      <button class="nav" data-lv="menu" aria-label="Opciones"><svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button>
+    </header>
+    <div class="lv-bar"><i style="width:${Math.round((doneN / Math.max(1, total)) * 100)}%"></i></div>
+    <div class="lv-phase ${live.phase}${paused ? ' paused' : ''}">${phaseTxt}</div>
+    ${center}
+    ${lastRow}
+    ${exCard(shownIdx(), live.phase === 'rest' ? 'Siguiente' : 'Ahora')}
+    <div class="lv-ctrl">${controls}</div>
+    ${sheet}
+  </div>`;
+  if (live.phase === 'rest') paintClock(t);
+}
+
+function summaryHtml() {
+  const S = SESSIONS[live.session];
+  const byEx = [];
+  live.done.forEach((d) => {
+    let row = byEx.find((r) => r.ex === d.ex);
+    if (!row) byEx.push(row = { ex: d.ex, vals: [], kg: 0 });
+    row.vals.push(valOf(d.ex, d)); row.kg = d.kg;
+  });
+  const P = (ex) => EX_PLAN[ex];
+  const up = (r) => r.vals.length >= P(r.ex).sets && r.vals.every((v) => v >= P(r.ex).r[1]);
+  return `<div class="lv-in lv-done">
+    <div class="done-ic big">${CHECK}</div>
+    <div class="lv-phase done">Sesión terminada</div>
+    <h2 class="name">${esc(S.n)}</h2>
+    <div class="stats">
+      <div class="card stat"><b>${clock(live.endedAt - (live.startedAt || live.endedAt))}</b><span>duración</span></div>
+      <div class="card stat"><b>${live.done.length}</b><span>series hechas</span></div>
+    </div>
+    ${lastEditor(live.done[live.done.length - 1], 'Última serie', false)}
+    <ul class="card entries sum">${byEx.map((r) => `<li><div><strong>${esc(EX[r.ex].n)}</strong><div class="s">${joinVals(r.vals)} ${unit(r.ex)} · ${fmtKg(r.kg)}</div>${up(r) ? '<div class="upb">Próxima vez: sube dificultad</div>' : ''}</div></li>`).join('')}</ul>
+    <p class="lede">Guardado en el calendario. La próxima vez verás estos números como «última vez».</p>
+    <div class="lv-ctrl"><button class="btn huge" data-lv="close">Cerrar</button></div>
+  </div>`;
+}
+
+function liveAction(a) {
+  unlockAudio();
+  if (a !== 'discard') liveUI.discard = false;
+  switch (a) {
+    case 'begin': return beginSet();
+    case 'done': return finishSet();
+    case 'pause': return pauseRest();
+    case 'resume': return resumeRest();
+    case 'plus': return addRest(15000);
+    case 'now': return restDone(now());
+    case 'undo': return undoSet();
+    case 'how': liveUI.how = true; return renderLive();
+    case 'menu': liveUI.menu = !liveUI.menu; liveUI.exit = false; return renderLive();
+    case 'exit': liveUI.exit = true; liveUI.menu = false; return renderLive();
+    case 'stay': liveUI.exit = false; liveUI.menu = false; return renderLive();
+    case 'skipset': return skip(false);
+    case 'skipex': return skip(true);
+    case 'save': return completeLive();
+    case 'discard':
+      if (!liveUI.discard) { liveUI.discard = true; renderLive(); setTimeout(() => { if (liveUI.discard) { liveUI.discard = false; renderLive(); } }, 4000); return; }
+      return closeLive();
+    case 'close': return closeLive();
+  }
+}
+
+// Botón de empezar de Hoy y Plan. Si ya hay un entrenamiento en marcha, lleva a él.
+function startBtn(id) {
+  if (liveOn()) return `<button class="btn" data-resume>Volver al entrenamiento (${esc(SESSIONS[live.session].n)})</button>`;
+  return `<button class="btn" data-start="${id}"><svg class="ic" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg>Empezar ${esc(SESSIONS[id].n)}</button>`;
+}
+
+/* ============================================================
+   ACCIONES
+   ============================================================ */
+function setTab(t) {
+  state.tab = t; store.set('tab', t);
+  try { history.replaceState(null, '', '#' + t); } catch (e) { /* sin historial */ }
+  render();
+  window.scrollTo(0, 0);
+}
+function setSession(id) {
+  state.planSession = id; store.set('planSession', id);
+}
+
+// Abre el selector de fecha del móvil para apuntar una sesión en otro día.
+function pickDay(session) {
+  const inp = $('#pick');
+  inp.dataset.session = session;
+  inp.max = todayStr();
+  inp.value = todayStr();
+  try { inp.showPicker(); } catch (e) { inp.focus(); inp.click(); }
+}
+
+function arm(id) {
+  state.armed = id; render();
+  setTimeout(() => { if (state.armed === id) { state.armed = null; render(); } }, 4000);
+}
+
+document.addEventListener('click', (ev) => {
+  const t = ev.target.closest('button');
+  if (!t) return;
+  if (t.dataset.lv) return liveAction(t.dataset.lv);
+  if (t.dataset.adj) { const [f, d] = t.dataset.adj.split(':'); unlockAudio(); return adjustLast(f, Number(d)); }
+  if (t.dataset.tadj) {
+    const [ex, k, d] = t.dataset.tadj.split(':');
+    const tg = targetOf(ex);
+    if (k === 'kg') tg.kg = Math.max(0, tg.kg + Number(d));
+    else tg.reps[Number(k)] = Math.max(0, tg.reps[Number(k)] + Number(d) * stepOf(ex));
+    setTarget(ex, tg); render(); return;
+  }
+  if (t.dataset.treset) { resetTarget(t.dataset.treset); render(); return; }
+  if (t.hasAttribute('data-resume')) return openLive();
+  if (t.dataset.start) return startLive(t.dataset.start);
+  if (t.dataset.tab) return setTab(t.dataset.tab);
+  if (t.dataset.session) { setSession(t.dataset.session); render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.open) { setSession(t.dataset.open); setTab('plan'); return; }
+  if (t.dataset.mark) { addLog(t.dataset.mark, todayStr()); state.armed = null; render(); return; }
+  if (t.dataset.pick) return pickDay(t.dataset.pick);
+  if (t.dataset.add) { addLog(t.dataset.add, state.calSel); state.armed = null; render(); return; }
+  if (t.dataset.del) {
+    if (state.armed !== t.dataset.del) return arm(t.dataset.del);
+    removeLog(t.dataset.del); state.armed = null; render(); return;
+  }
+  if (t.dataset.day) {
+    state.calSel = t.dataset.day; state.armed = null;
+    const d = parseYmd(state.calSel); state.calMonth = [d.getFullYear(), d.getMonth()];
+    render(); return;
+  }
+  if (t.dataset.month) {
+    const [y, m] = state.calMonth;
+    const d = new Date(y, m + Number(t.dataset.month), 1);
+    state.calMonth = [d.getFullYear(), d.getMonth()]; state.armed = null;
+    render();
+  }
+});
+
+// Recuerda qué ejercicios están abiertos en Plan.
+document.addEventListener('toggle', (ev) => {
+  const d = ev.target;
+  if (!d.matches || !d.matches('details[data-ex]')) return;
+  if (d.open) state.openEx.add(d.dataset.ex); else state.openEx.delete(d.dataset.ex);
+}, true);
+
+document.addEventListener('change', (ev) => {
+  const el = ev.target;
+  if (el.dataset && el.dataset.note) { setNote(el.dataset.note, el.value); return; }
+  if (el.id !== 'pick' || !el.value || !el.dataset.session) return;
+  if (el.value > todayStr()) return;
+  addLog(el.dataset.session, el.value);
+  state.calSel = el.value; state.calMonth = null; state.armed = null;
+  render();
+});
+
+// Si la app se queda abierta y cambia el día, «hoy» se recalcula al volver.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) return;
+  render();
+  if (liveOn() && !$('#live').hidden) { tickLive(); requestWake(); }
+});
+
+// Botón «atrás» de Android durante el entrenamiento: pregunta antes de salir.
+window.addEventListener('popstate', () => {
+  if (!live || $('#live').hidden) return;
+  if (live.phase === 'done') return closeLive();
+  liveUI.exit = true; liveUI.menu = false; renderLive();
+  try { history.pushState({ fjLive: 1 }, '', location.hash); } catch (e) { /* sin historial */ }
+});
+
+window.addEventListener('hashchange', () => {
+  const t = location.hash.replace('#', '');
+  if (TABS.includes(t) && t !== state.tab) setTab(t);
+});
+
+render();
+// Si la app se cerró a mitad de entrenamiento, sigue donde estaba.
+if (liveOn()) openLive();
+else if (live) { live = null; store.set('live', null); }
+</script>
+</body>
+</html>
