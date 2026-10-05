@@ -232,7 +232,7 @@ Cada fase termina con algo que ya funciona en el móvil.
 | 2. Calendario | Check «Hecha hoy», calendario mensual, quitar y añadir días, «hoy toca» | Ya puedes apuntar entrenamientos | Hecha |
 | 3. Entrenamiento en marcha | Cola, estados trabajando y descansando, cuenta atrás por hora, pausa, +15 s, deshacer, pitidos, pantalla encendida, recuperar al reabrir | Entrenas con la app | Hecha |
 | 4. Repeticiones y kg | Apuntar en el descanso, última vez, próxima vez, progresión automática, editar objetivo | La app sabe en cuánto te quedaste | Hecha |
-| 5. Guía y seguridad | Guía, ajustes, exportar e importar, `sw.js` | Funciona sin internet y tienes copia | Pendiente |
+| 5. Guía y seguridad | Guía, ajustes, exportar e importar, `sw.js` | Funciona sin internet y tienes copia | Hecha, menos `sw.js` |
 | 6. Extras | Peso corporal, gráficas, aviso de descarga (el modo oscuro ya está hecho) | Ves tu progreso | Pendiente |
 | 7. Publicar | Repo `fit-jan`, GitHub Pages en `main`, instalar en el móvil | App en el móvil | Hecha |
 

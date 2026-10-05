@@ -321,6 +321,35 @@
   .entries.sum li > div { display: flex; flex-direction: column; gap: 3px; }
   .entries.sum .upb { align-self: flex-start; font-size: 12.5px; padding: 3px 8px; }
 
+  /* Guía y ajustes */
+  .seg.two { grid-template-columns: 1fr 1fr; }
+  details.gsec { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+  details.gsec > summary { list-style: none; cursor: pointer; padding: 13px 14px; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16.5px; }
+  details.gsec > summary::-webkit-details-marker { display: none; }
+  details.gsec > summary::after { content: "+"; margin-left: auto; font-size: 22px; color: var(--muted); line-height: 1; }
+  details.gsec[open] > summary::after { content: "–"; }
+  .gbody { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 15.5px; }
+  .gbody p { margin: 0; }
+  .gbody ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+  .set-list { padding: 6px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 15px; }
+  .set-row:first-child { border-top: 0; }
+  .mst.wide { grid-template-columns: 36px 1fr 36px; width: 164px; background: var(--sunken); flex: none; }
+  .mst.wide .stp-b { background: var(--surface); }
+  .mst.wide b { font-size: 14px; white-space: nowrap; }
+  .tg { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 15px; cursor: pointer; }
+  .tg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .tg i { width: 48px; height: 28px; border-radius: 999px; background: var(--line); position: relative; flex: none; transition: background 0.2s; }
+  .tg i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.25); transition: transform 0.2s; }
+  .tg input:checked + i { background: var(--accent); }
+  .tg input:checked + i::after { transform: translateX(20px); }
+  .tg input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .note-box.warn { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--accent-line); background: var(--accent-soft); }
+  .note-box.warn p { margin: 0; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lede.ok { color: var(--ok-text); font-weight: 700; }
+  .lede.bad { color: var(--danger); font-weight: 700; }
+
   /* Vacíos */
   .empty { padding: 28px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .empty svg { width: 44px; height: 44px; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
@@ -344,6 +373,7 @@
 </div>
 
 <div class="live" id="live" hidden role="dialog" aria-modal="true" aria-label="Entrenamiento en marcha"></div>
+<input type="file" id="imp" class="vh" accept="application/json,.json" aria-label="Elegir copia" tabindex="-1">
 <input type="date" id="pick" class="vh" aria-label="Elegir día" tabindex="-1">
 
 <nav class="tabs" aria-label="Secciones">
@@ -524,7 +554,7 @@ const SESSIONS = {
 };
 const ROTATION = ['TA', 'PA', 'TB', 'PB'];
 
-// Descansos por defecto, en segundos. Se podrán cambiar en Ajustes (fase 5).
+// Descansos por defecto, en segundos. Se cambian en Guía → Ajustes.
 const REST = { pair: 30, round: 90, heavy: 120, single: 60, block: 90 };
 const LETTERS = 'ABCDEFGH';
 
@@ -543,10 +573,26 @@ const state = {
   calMonth: null,  // [año, mes 0–11] que enseña el calendario
   calSel: null,    // día elegido en el calendario, 'AAAA-MM-DD'
   armed: null,     // botón «Quitar» esperando el segundo toque
+  guiaSeg: store.get('guiaSeg', 'guia') === 'ajustes' ? 'ajustes' : 'guia',
+  pendingImport: null, // copia leída esperando confirmación
+  importMsg: null,
   openEx: new Set() // ejercicios abiertos en Plan, para que sigan abiertos al repintar
 };
 if (!TABS.includes(state.tab)) state.tab = 'hoy';
 if (store.get('v') == null) store.set('v', 1);
+
+// Ajustes guardados (fj.settings) sobre los valores por defecto.
+function settings() {
+  const v = store.get('settings', {}) || {};
+  return { rest: { ...REST, ...(v.rest || {}) }, sound: v.sound !== false, vib: v.vib !== false };
+}
+function saveSettings(patch) {
+  const v = store.get('settings', {}) || {};
+  store.set('settings', { ...v, ...patch });
+}
+
+// Pide a Chrome que no borre los datos de FitJan aunque falte espacio.
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { /* no disponible */ }
 
 /* ============================================================
    UTILIDADES
@@ -564,7 +610,7 @@ function targetText(it) {
 
 // Convierte una sesión en la lista de pasos en orden, con el descanso que va después de cada uno.
 // Las superseries salen intercaladas: A1 serie 1, A2 serie 1, A1 serie 2...
-function buildQueue(id, rest = REST) {
+function buildQueue(id, rest = settings().rest) {
   const steps = [];
   SESSIONS[id].blocks.forEach((b, bi) => {
     const rounds = Math.max(...b.map((it) => it.sets));
@@ -703,6 +749,7 @@ function setNote(ex, txt) {
   store.set('notes', all);
 }
 const joinVals = (arr) => arr.join(' · ');
+const nTrain = (n) => n + (n === 1 ? ' entrenamiento' : ' entrenamientos');
 
 // Sesiones de esta semana (lunes a domingo) y semanas seguidas con al menos una sesión.
 // Si esta semana aún no has entrenado, la racha cuenta desde la semana pasada.
@@ -723,7 +770,7 @@ const TITLES = {
   hoy: ['Hoy', 'Tu próxima sesión de la rotación'],
   plan: ['Plan', ''],
   calendario: ['Calendario', 'Los días que has entrenado'],
-  guia: ['Guía', 'Reglas del plan y ajustes']
+  guia: ['Guía', '']
 };
 
 function sessionSeg() {
@@ -738,7 +785,8 @@ function sessionMeta(id) {
 function renderTop() {
   let [t, sub] = TITLES[state.tab];
   if (state.tab === 'plan') sub = sessionMeta(state.planSession);
-  $('#top').innerHTML = `<div class="eyebrow">FitJan</div><h1>${esc(t)}</h1>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}${state.tab === 'plan' ? `<div class="top-seg">${sessionSeg()}</div>` : ''}`;
+  const seg = state.tab === 'plan' ? sessionSeg() : state.tab === 'guia' ? guiaSeg() : '';
+  $('#top').innerHTML = `<div class="eyebrow">FitJan</div><h1>${esc(t)}</h1>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}${seg ? `<div class="top-seg">${seg}</div>` : ''}`;
 }
 
 const CHECK = '<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -822,8 +870,9 @@ function exItem(it, slot) {
 }
 
 function blockRest(b) {
-  if (b.length > 1) return `descanso ${fmtRest(REST.pair)} entre ejercicios · ${fmtRest(REST.round)} por vuelta`;
-  return 'descanso ' + fmtRest(EX[b[0].ex].heavy ? REST.heavy : REST.single);
+  const R = settings().rest;
+  if (b.length > 1) return `descanso ${fmtRest(R.pair)} entre ejercicios · ${fmtRest(R.round)} por vuelta`;
+  return 'descanso ' + fmtRest(EX[b[0].ex].heavy ? R.heavy : R.single);
 }
 
 function renderPlan() {
@@ -892,9 +941,190 @@ function renderCalendario() {
     </div>`;
 }
 
+function guiaSeg() {
+  return `<div class="seg two" role="group" aria-label="Guía o ajustes">
+    <button data-gseg="guia" aria-pressed="${state.guiaSeg === 'guia'}">Guía</button>
+    <button data-gseg="ajustes" aria-pressed="${state.guiaSeg === 'ajustes'}">Ajustes y copia</button>
+  </div>`;
+}
+
+// Las reglas del plan. Cada sección es plegable.
+const GUIDE = [
+  { t: 'Cómo funciona el plan', p: 'Cuatro sesiones en rotación: Torso A → Pierna A → Torso B → Pierna B. Las haces en orden en los días que puedas entrenar.', li: [
+    'Torso y pierna se alternan, así nunca trabajas el mismo músculo dos días seguidos.',
+    'Con 4 días por semana, cada músculo trabaja 2 veces. Con 3 días, 1,5 veces de media: también sirve para crecer.',
+    'La pestaña Hoy te dice siempre qué sesión toca.'
+  ]},
+  { t: 'Orden de los ejercicios', p: 'Primero los ejercicios grandes y después los pequeños. Así los músculos pequeños no llegan cansados a los ejercicios principales.', li: [
+    'Bíceps y tríceps van al final: ya trabajan en todos los empujes y tirones.',
+    'Antebrazos y agarre: si se cansan, limitan los remos y las dominadas. Por eso no se juntan dos ejercicios de agarre.',
+    'Abdomen y zona lumbar van al final: sujetan el cuerpo en casi todo, sobre todo en suspensión.',
+    'Gemelos al final: son pequeños y no estorban a nada.'
+  ]},
+  { t: 'Superseries', p: 'Una superserie son dos ejercicios de músculos distintos hechos uno tras otro. Mientras haces uno, el músculo del otro descansa.', li: [
+    'Ahorras tiempo y rindes igual que con series seguidas.',
+    'Se juntan empuje con tirón: flexiones con remo, pica con dominada.',
+    'No se juntan ejercicios del mismo músculo, porque el segundo rinde peor.',
+    'Los ejercicios grandes de pierna (búlgara, pistol) van solos, porque cansan todo el cuerpo.'
+  ]},
+  { t: 'Esfuerzo', p: 'Termina cada serie cuando sientas que solo te quedan 1 o 2 repeticiones más.', li: [
+    'En curl, laterales y gemelos puedes llegar al fallo en la última serie.',
+    'En la búlgara y la pistol, nunca: la técnica se rompe antes que el músculo.',
+    'Si la técnica empeora, la serie ha terminado.'
+  ]},
+  { t: 'Progresión', p: 'Ganas músculo si cada semana el ejercicio es un poco más difícil. La app lo calcula sola.', li: [
+    'Sube repeticiones hasta llegar al máximo del rango en todas las series. Ejemplo: 4 × 15 en flexiones.',
+    'Después hazlo más difícil y vuelve al mínimo del rango. La app pone «Sube dificultad» cuando toca.',
+    'En el TRX: acerca los pies al anclaje para inclinarte más.',
+    'Con el chaleco: póntelo también en remos y pistol.',
+    'Con el ritmo: baja en 3 segundos y haz una pausa abajo.',
+    'Con una pierna o un brazo: pasa a la versión unilateral.',
+    'Cuando cambies la dificultad, escríbelo en la nota del ejercicio (pestaña Plan).'
+  ]},
+  { t: 'Descansos', p: 'Los descansos están en Ajustes y la app los aplica sola.', li: [
+    '30 s entre los dos ejercicios de una superserie: solo para recolocarte.',
+    '90 s después de cada vuelta: cada músculo descansa unos 2–2,5 min en total.',
+    '2 min en búlgara y pistol, 1 min en ejercicios pequeños solos.',
+    'Si necesitas más, pulsa Pausar o +15 s. Es mejor alargar un descanso que hacer una serie mala.'
+  ]},
+  { t: 'Calentamiento', p: '5 minutos antes de cada sesión.', li: [
+    'Círculos de brazos y de cadera.',
+    '10 sentadillas sin peso.',
+    '10 remos suaves con TRX.',
+    '10 flexiones con las manos apoyadas en una mesa.'
+  ]},
+  { t: 'Semana de descarga', p: 'Cada 6–8 semanas, haz una semana con las mismas sesiones y la mitad de series.', li: [
+    'El cuerpo recupera el cansancio acumulado y después rindes más.',
+    'Si notas que todo cuesta más durante varias sesiones seguidas, adelántala.'
+  ]},
+  { t: 'Comida y descanso', p: 'Sin comer más de lo que gastas, no ganarás peso aunque el plan sea bueno.', li: [
+    'Calorías: unas 300 kcal más de las que gastas.',
+    'Proteína: 1,6–2 g por kilo de peso al día.',
+    'Ritmo: 1–2 kg al mes. Si ganas más, es sobre todo grasa.',
+    'Si la báscula no sube en 2 semanas, añade unas 200 kcal.',
+    'Duerme 7–9 horas: el músculo crece mientras descansas.'
+  ]},
+  { t: 'Anclaje seguro de la puerta', p: 'El TRX va colgado de la puerta con el anclaje. Revísalo antes de cada sesión.', li: [
+    'Usa una puerta maciza y ciérrala con llave.',
+    'Colócate en el lado donde tu tirón empuja la puerta contra el marco, nunca en el lado donde la abre.',
+    'Pasa el anclaje por encima de la puerta y ciérrala: el tope tiene que quedar encajado al otro lado.',
+    'Antes de la primera serie, tira fuerte una vez para comprobar que no se mueve.'
+  ]},
+  { t: 'Tu material', li: [
+    'TRX con anclaje de puerta: remos, dominada asistida, curl, tríceps, face pull, pistol y curl femoral.',
+    'Chaleco de 10 kg: la pieza clave para progresar en flexiones, fondos y piernas.',
+    'Pesas de 3 kg: solo para músculos pequeños (laterales) o para sumar algo en piernas.',
+    'Esterilla: abdomen, superman, puente y curl femoral.'
+  ]}
+];
+
+function renderGuiaText() {
+  return GUIDE.map((g, i) => `<details class="gsec"${i === 0 ? ' open' : ''}>
+      <summary>${esc(g.t)}</summary>
+      <div class="gbody">${g.p ? `<p>${esc(g.p)}</p>` : ''}${g.li ? `<ul>${g.li.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+    </details>`).join('');
+}
+
+const REST_LABELS = [
+  ['pair', 'Entre los dos ejercicios de una superserie', 5],
+  ['round', 'Después de cada vuelta de superserie', 15],
+  ['heavy', 'Ejercicio grande solo (búlgara, pistol)', 15],
+  ['single', 'Ejercicio pequeño solo', 15],
+  ['block', 'Cambio de bloque', 15]
+];
+
+function toggleRow(key, label, on) {
+  return `<label class="tg"><span>${label}</span><input type="checkbox" data-set="${key}" ${on ? 'checked' : ''}><i aria-hidden="true"></i></label>`;
+}
+
+function renderAjustes() {
+  const st = settings();
+  const L = getLogs();
+  const lastExp = store.get('lastExport', null);
+  const imp = state.pendingImport;
+  const impBox = imp ? `<div class="note-box warn">
+      <strong>¿Recuperar esta copia?</strong>
+      <p>Es del ${esc(fmtDay(imp.date || todayStr(), { day: 'numeric', month: 'long', year: 'numeric' }))} y tiene ${nTrain((imp.data.logs || []).length)}. Sustituye todo lo que hay ahora en este móvil (${nTrain(L.length)}).</p>
+      <div class="row2"><button class="btn" data-imp="ok">Sustituir</button><button class="btn ghost" data-imp="cancel">Cancelar</button></div>
+    </div>` : '';
+  return `
+    <h3 class="h2">Descansos</h3>
+    <div class="card set-list">${REST_LABELS.map(([k, label, step]) => `<div class="set-row">
+        <span>${label}</span>
+        <div class="mst wide"><button class="stp-b" data-rest="${k}:-${step}" aria-label="Menos descanso">−</button><b>${fmtRest(st.rest[k])}</b><button class="stp-b" data-rest="${k}:${step}" aria-label="Más descanso">+</button></div>
+      </div>`).join('')}
+      <button class="link" data-rest-reset>Volver a los descansos por defecto</button>
+    </div>
+    <h3 class="h2">Avisos</h3>
+    <div class="card set-list">
+      ${toggleRow('sound', 'Pitidos al acabar el descanso', st.sound)}
+      ${toggleRow('vib', 'Vibración', st.vib)}
+      <button class="btn ghost" data-test-signal>Probar aviso</button>
+    </div>
+    <h3 class="h2">Copia de seguridad</h3>
+    <div class="card set-list">
+      <p class="lede">Tus datos solo están en este móvil. Si borras los datos de Chrome o desinstalas la app, se pierden. Guarda una copia de vez en cuando.</p>
+      <p class="s">${nTrain(L.length)} guardados · última copia: ${lastExp ? esc(relDay(lastExp)) : 'nunca'}</p>
+      <button class="btn" data-export>Descargar copia</button>
+      <button class="btn ghost" data-import>Recuperar una copia…</button>
+      ${state.importMsg ? `<p class="lede ${state.importMsg.ok ? 'ok' : 'bad'}">${esc(state.importMsg.text)}</p>` : ''}
+      ${impBox}
+    </div>`;
+}
+
 function renderGuia() {
-  $('#v-guia').innerHTML = emptyView('<svg viewBox="0 0 24 24"><path d="M5 4.5h10.5a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10.5M9 8.5h6"/></svg>',
-    'Llega en la fase 5', 'Aquí estarán la progresión, los descansos, la comida, los ajustes y la copia de seguridad.');
+  $('#v-guia').innerHTML = state.guiaSeg === 'ajustes' ? renderAjustes() : renderGuiaText();
+}
+
+/* Copia de seguridad ------------------------------------------------ */
+// Descarga un .json con todo lo guardado (menos el entrenamiento en marcha).
+function exportData() {
+  const data = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('fj.') && k !== 'fj.live' && k !== 'fj.lastExport') data[k.slice(3)] = JSON.parse(localStorage.getItem(k));
+    }
+  } catch (e) { /* sin almacenamiento */ }
+  const blob = new Blob([JSON.stringify({ app: 'FitJan', v: 1, date: todayStr(), data }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `fitjan-copia-${todayStr()}.json`;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  store.set('lastExport', todayStr());
+  state.importMsg = { ok: true, text: 'Copia descargada. Guárdala fuera del móvil (Drive, correo…).' };
+  render();
+}
+
+function readImport(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const obj = JSON.parse(r.result);
+      if (!obj || obj.app !== 'FitJan' || typeof obj.data !== 'object' || (obj.data.logs && !Array.isArray(obj.data.logs))) throw new Error('formato');
+      state.pendingImport = obj; state.importMsg = null;
+    } catch (e) {
+      state.pendingImport = null; state.importMsg = { ok: false, text: 'Este archivo no es una copia de FitJan.' };
+    }
+    render();
+  };
+  r.readAsText(file);
+}
+
+function applyImport() {
+  const obj = state.pendingImport;
+  if (!obj) return;
+  try {
+    Object.keys(localStorage).filter((k) => k.startsWith('fj.') && k !== 'fj.live').forEach((k) => localStorage.removeItem(k));
+  } catch (e) { /* sin almacenamiento */ }
+  Object.entries(obj.data).forEach(([k, v]) => store.set(k, v));
+  state.pendingImport = null;
+  state.importMsg = { ok: true, text: `Copia recuperada: ${nTrain((obj.data.logs || []).length)}.` };
+  state.planSession = ROTATION.includes(store.get('planSession')) ? store.get('planSession') : 'TA';
+  state.guiaSeg = 'ajustes'; state.calSel = null; state.calMonth = null;
+  store.set('tab', 'guia'); store.set('guiaSeg', 'ajustes');
+  render();
 }
 
 function render() {
@@ -956,7 +1186,9 @@ function tone(freq, ms) {
 const vib = (p) => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { /* sin vibración */ } };
 // 'tick': pitido corto (3, 2, 1). 'go': pitido largo, empieza la serie.
 function signal(kind) {
-  if (kind === 'tick') { tone(880, 150); vib(70); } else { tone(1320, 500); vib([220, 90, 220]); }
+  const st = settings();
+  if (kind === 'tick') { if (st.sound) tone(880, 150); if (st.vib) vib(70); }
+  else { if (st.sound) tone(1320, 500); if (st.vib) vib([220, 90, 220]); }
 }
 
 /* Pantalla encendida ------------------------------------------------ */
@@ -1336,6 +1568,18 @@ document.addEventListener('click', (ev) => {
     setTarget(ex, tg); render(); return;
   }
   if (t.dataset.treset) { resetTarget(t.dataset.treset); render(); return; }
+  if (t.dataset.gseg) { state.guiaSeg = t.dataset.gseg; store.set('guiaSeg', state.guiaSeg); state.importMsg = null; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.rest) {
+    const [k, d] = t.dataset.rest.split(':');
+    const R = settings().rest;
+    R[k] = Math.min(600, Math.max(k === 'pair' ? 0 : 15, R[k] + Number(d)));
+    saveSettings({ rest: R }); render(); return;
+  }
+  if (t.hasAttribute('data-rest-reset')) { saveSettings({ rest: {} }); render(); return; }
+  if (t.hasAttribute('data-test-signal')) { unlockAudio(); signal('go'); return; }
+  if (t.hasAttribute('data-export')) return exportData();
+  if (t.hasAttribute('data-import')) { $('#imp').value = ''; $('#imp').click(); return; }
+  if (t.dataset.imp) { if (t.dataset.imp === 'ok') applyImport(); else { state.pendingImport = null; render(); } return; }
   if (t.hasAttribute('data-resume')) return openLive();
   if (t.dataset.start) return startLive(t.dataset.start);
   if (t.dataset.tab) return setTab(t.dataset.tab);
@@ -1371,6 +1615,8 @@ document.addEventListener('toggle', (ev) => {
 document.addEventListener('change', (ev) => {
   const el = ev.target;
   if (el.dataset && el.dataset.note) { setNote(el.dataset.note, el.value); return; }
+  if (el.dataset && el.dataset.set) { saveSettings({ [el.dataset.set]: el.checked }); return; }
+  if (el.id === 'imp') { if (el.files && el.files[0]) readImport(el.files[0]); return; }
   if (el.id !== 'pick' || !el.value || !el.dataset.session) return;
   if (el.value > todayStr()) return;
   addLog(el.dataset.session, el.value);
