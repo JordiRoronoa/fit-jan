@@ -226,15 +226,15 @@ live = { session: 'TA', queue: [...], i: 3, phase: 'work' | 'rest',
 
 Cada fase termina con algo que ya funciona en el móvil.
 
-| Fase | Qué se hace | Resultado |
-|---|---|---|
-| 1. Esqueleto | Carpeta, `index.html`, `manifest`, iconos, pestañas, `store`, datos del plan | Se instala en el móvil y muestra el plan |
-| 2. Calendario | Check «Hecha hoy», calendario mensual, quitar y añadir días, «hoy toca» | Ya puedes apuntar entrenamientos |
-| 3. Entrenamiento en marcha | Cola, estados trabajando y descansando, cuenta atrás por hora, pausa, +15 s, deshacer, pitidos, pantalla encendida, recuperar al reabrir | Entrenas con la app |
-| 4. Repeticiones y kg | Apuntar en el descanso, última vez, próxima vez, progresión automática, editar objetivo | La app sabe en cuánto te quedaste |
-| 5. Guía y seguridad | Guía, ajustes, exportar e importar, `sw.js` | Funciona sin internet y tienes copia |
-| 6. Extras | Peso corporal, gráficas, aviso de descarga, modo oscuro | Ves tu progreso |
-| 7. Publicar | Repo `fit-jan`, GitHub Pages en `main`, instalar en el móvil | App en el móvil |
+| Fase | Qué se hace | Resultado | Estado |
+|---|---|---|---|
+| 1. Esqueleto | Carpeta, `index.html`, `manifest`, iconos, pestañas, `store`, datos del plan | Se instala en el móvil y muestra el plan | Hecha |
+| 2. Calendario | Check «Hecha hoy», calendario mensual, quitar y añadir días, «hoy toca» | Ya puedes apuntar entrenamientos | Hecha |
+| 3. Entrenamiento en marcha | Cola, estados trabajando y descansando, cuenta atrás por hora, pausa, +15 s, deshacer, pitidos, pantalla encendida, recuperar al reabrir | Entrenas con la app | Hecha |
+| 4. Repeticiones y kg | Apuntar en el descanso, última vez, próxima vez, progresión automática, editar objetivo | La app sabe en cuánto te quedaste | Hecha |
+| 5. Guía y seguridad | Guía, ajustes, exportar e importar, `sw.js` | Funciona sin internet y tienes copia | Pendiente |
+| 6. Extras | Peso corporal, gráficas, aviso de descarga (el modo oscuro ya está hecho) | Ves tu progreso | Pendiente |
+| 7. Publicar | Repo `fit-jan`, GitHub Pages en `main`, instalar en el móvil | App en el móvil | Hecha |
 
 **Comprobación de cada fase:** abrir la app en Chrome con tamaño de móvil y recorrer el flujo. En la fase 3, además: bloquear la pantalla durante un descanso y comprobar que al volver el tiempo es correcto.
 
