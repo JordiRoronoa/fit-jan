@@ -350,6 +350,32 @@
   .lede.ok { color: var(--ok-text); font-weight: 700; }
   .lede.bad { color: var(--danger); font-weight: 700; }
 
+  /* Dibujos y técnica */
+  .figs { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 6px 8px 4px; }
+  .figs.one { grid-template-columns: minmax(0, 260px); justify-content: center; }
+  .figs figure { margin: 0; text-align: center; }
+  .figs figcaption { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .figs-arrow { color: var(--muted); font-size: 16px; }
+  .fig { width: 100%; height: auto; display: block; }
+  .fb { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .fb2 { stroke: var(--muted); }
+  .fh { fill: var(--ink); }
+  .fp-floor { stroke: var(--line); stroke-width: 1; }
+  .fp-door { fill: var(--sunken); }
+  .fp-mat { fill: var(--leg); opacity: 0.35; }
+  .fp-obj { fill: var(--sunken); stroke: var(--muted); stroke-width: 0.8; }
+  .fp-leg { stroke: var(--muted); stroke-width: 1.4; }
+  .fp-strap { stroke: var(--accent); stroke-width: 1.6; }
+  .fp-anchor { fill: var(--accent); }
+  .fp-vest { stroke: var(--leg); stroke-width: 6.5; stroke-linecap: round; opacity: 0.85; }
+  .fp-db { fill: var(--accent); }
+  .errs li::marker { content: "✕  "; color: var(--danger); font-weight: 700; }
+  .vid-src { margin-top: -6px; }
+  .lv-tech { display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+  .lv-tech h4 { margin: 0 0 3px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .lv-tech ol, .lv-tech ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+  .lv-tech .vid { align-self: flex-start; }
+
   /* Vacíos */
   .empty { padding: 28px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .empty svg { width: 44px; height: 44px; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
@@ -553,6 +579,241 @@ const SESSIONS = {
   ]}
 };
 const ROTATION = ['TA', 'PA', 'TB', 'PB'];
+
+// Errores típicos de cada ejercicio.
+const ERR = {
+  'flexiones': ["Cadera hundida o en pico: el cuerpo va recto como una tabla.", "Codos abiertos a 90°: cargan el hombro. Llévalos a unos 45°.", "Bajar solo un poco: el pecho tiene que llegar casi al suelo."],
+  'remo-neutro': ["Cadera que cae hacia atrás: aprieta el glúteo y mantén el cuerpo recto.", "Encoger los hombros hacia las orejas: bájalos antes de tirar.", "Tirar solo con los brazos sin juntar las escápulas al final."],
+  'pica': ["Cadera baja: sin la V invertida trabaja el pecho y no el hombro.", "Llevar la cabeza por delante de las manos: baja entre ellas.", "Codos abiertos hacia los lados: apúntalos hacia atrás."],
+  'dominada-asistida': ["Empujar fuerte con las piernas: deben ayudar poco.", "Encoger los hombros: empieza bajando las escápulas.", "Bajar de golpe: baja controlando hasta estirar los brazos."],
+  'face-pull': ["Codos bajos: van a la altura de los hombros.", "Arquear la zona lumbar: el cuerpo va recto.", "Tirar hacia el pecho en lugar de hacia la frente."],
+  'curl-trx': ["Bajar los codos durante el curl: se quedan quietos a la altura de los hombros.", "Mover la cadera para ayudarte: cuerpo recto todo el rato.", "Estirar los brazos de golpe: baja despacio."],
+  'triceps-trx': ["Abrir los codos hacia los lados: apuntan al frente, cerca de la cabeza.", "Bajar los codos al doblar: entonces trabaja el pecho y no el tríceps.", "Cadera hundida: abdomen y glúteo apretados."],
+  'bulgara': ["Pie de delante muy cerca de la silla: la rodilla se va adelante y la cargas.", "Empujar con la pierna de atrás: solo apoya.", "Rodilla de delante hacia dentro: sigue la línea del pie."],
+  'curl-femoral': ["Bajar la cadera al traer los talones: mantenla arriba todo el rato.", "Arquear la zona lumbar: aprieta glúteo y abdomen.", "Asas mal colocadas: ajusta los talones antes de empezar."],
+  'laterales': ["Balancear el cuerpo para subir: si lo necesitas, sobra peso.", "Subir por encima de los hombros: para a su altura.", "Encoger los hombros: trabaja el trapecio y no el hombro."],
+  'hip-thrust': ["Arquear la zona lumbar arriba: sube hasta alinear, no más.", "Empujar con la punta del pie: empuja con el talón.", "Cadera torcida hacia un lado: mantenla nivelada."],
+  'rodillas-pecho': ["Zona lumbar hundida: aprieta el abdomen antes de empezar.", "Hombros por detrás de las manos: ponlos encima de las muñecas.", "Ir rápido con rebote: sube y baja controlando."],
+  'gemelo': ["Rebotar abajo: para 1 segundo, el rebote quita trabajo al gemelo.", "Recorrido corto: baja del todo y sube del todo.", "Doblar la rodilla para ayudarte: pierna estirada."],
+  'superman': ["Echar la cabeza atrás: mira al suelo con el cuello largo.", "Subir con impulso: sube despacio y aguanta arriba.", "Doblar las rodillas: piernas estiradas."],
+  'fondos': ["Bajar demasiado: para cuando los hombros lleguen a la altura de los codos.", "Encoger los hombros hacia las orejas: mantenlos bajos.", "Sillas que se mueven: apóyalas contra la pared y pruébalas antes."],
+  'remo-prono': ["Codos pegados al cuerpo: en este remo van abiertos, a la altura del pecho.", "Cadera que cae: cuerpo recto todo el rato.", "No juntar las escápulas al final del tirón."],
+  'flexiones-elevadas': ["Cadera hundida: con los pies altos cuesta más ir recto.", "Bajar la cabeza antes que el pecho: el pecho llega primero.", "Codos abiertos a 90°: llévalos a unos 45°."],
+  'jalon': ["Doblar los codos: los brazos van rectos todo el rato.", "Doblar la cadera para subir: el cuerpo sube recto.", "Encoger los hombros: bájalos antes de empezar."],
+  'y-raise': ["Doblar los codos: brazos rectos.", "Arquear la zona lumbar: abdomen apretado.", "Empezar muy inclinado: empieza más vertical y ve bajando."],
+  'diamante': ["Codos abiertos hacia los lados: van pegados al cuerpo.", "Manos muy adelantadas: van bajo el pecho.", "Cadera hundida: cuerpo recto."],
+  'pistol': ["Tirar con los brazos para subir: solo ayudan un poco.", "Rodilla hacia dentro: sigue la línea del pie.", "Levantar el talón: todo el pie apoyado."],
+  'rdl': ["Redondear la espalda: espalda recta y pecho abierto.", "Abrir la cadera hacia un lado: las dos caderas miran al suelo.", "Doblar mucho la rodilla de apoyo: un poco, no es una sentadilla."],
+  'zancada': ["Paso corto: la rodilla de delante se va por delante del pie.", "Inclinar mucho el tronco: pecho alto.", "Golpear la rodilla contra el suelo: baja hasta casi tocar."],
+  'plancha': ["Cadera hundida o muy alta: recto de cabeza a talones.", "Aguantar la respiración: respira normal.", "Seguir cuando la cadera cae: ahí termina la serie."],
+  'hollow': ["Zona lumbar despegada del suelo: dobla las rodillas o sube las piernas.", "Tirar del cuello: barbilla un poco hacia el pecho, sin forzar.", "Brazos y piernas demasiado altos: cuanto más bajos, más difícil."]
+};
+
+// Un vídeo concreto por ejercicio: [id de YouTube, canal, idioma]. Comprobados con oEmbed el 5 de octubre de 2026.
+const VIDEOS = {
+  'flexiones': ['sKmzcJKGKMI', "Cuerpo Supremo", 'es'],
+  'remo-neutro': ['4xkcDUwj-Oo', "Emiliano Salas Porta", 'es'],
+  'pica': ['YRwkz3P9340', "NO GYM NO PROBLEM", 'es'],
+  'dominada-asistida': ['7_256WBiSR4', "Tuscaloosa Fitness", 'en'],
+  'face-pull': ['9btTRtRIgRc', "Lucas Galdeano", 'es'],
+  'curl-trx': ['51Sq67fcuCk', "Esteban Hernandez", 'es'],
+  'triceps-trx': ['7cG9YRIkbHE', "Javier Suárez", 'es'],
+  'bulgara': ['IdilLr9nyuQ', "Your House Fitness", 'es'],
+  'curl-femoral': ['JeVtCbkCLxs', "Sportscience", 'es'],
+  'laterales': ['nOAUECQEpHs', "Dra. Isabel Junio", 'es'],
+  'hip-thrust': ['27qlgDz9yRg', "Made Possible Personal Training", 'en'],
+  'rodillas-pecho': ['4Q1AAkNASD4', "OriGym", 'en'],
+  'gemelo': ['5UiHopYrGM0', "Rodrigo Bermejo Trainer", 'es'],
+  'superman': ['Z3OZRqVXXwU', "Galvistrainer", 'es'],
+  'fondos': ['Fhy3wcgiRis', "Alejandro Pérez Romero", 'es'],
+  'remo-prono': ['zF6DK6pG1JI', "Entrenamiento para todos", 'es'],
+  'flexiones-elevadas': ['Hbse5DS7KL8', "BODY funcional", 'es'],
+  'jalon': ['XRsuIhPOOtc', "Travis Tarrant", 'en'],
+  'y-raise': ['32SsJD-9UeQ', "TRX Training", 'en'],
+  'diamante': ['eEi54s7TFvo', "Your House Fitness", 'es'],
+  'pistol': ['n9Pc264r7mE', "Rams · Preparación Física", 'es'],
+  'rdl': ['EERrhuuOtnE', "DrVíctorLópez", 'es'],
+  'zancada': ['zDN7X4oefgY', "APTA Vital Sport", 'es'],
+  'plancha': ['zfY5XXa26ug', "Marcos Sacristán (fisioterapeuta)", 'es'],
+  'hollow': ['Np9dowU1C4o', "CuídatePlus", 'es']
+};
+
+/* ============================================================
+   DIBUJOS DE LOS EJERCICIOS
+   Cada postura se describe con la cadera, la inclinación del tronco
+   y dónde están manos y pies. Codos y rodillas se calculan solos
+   (cinemática inversa de dos segmentos). Vista lateral, mirando a
+   la derecha, salvo las posturas con front: true.
+   Ángulos en grados: 0 = derecha, 90 = abajo, -90 = arriba.
+   ============================================================ */
+const FIG_L = { torso: 24, ua: 12, fa: 11, th: 14, sh: 14, neck: 6.5, head: 4.6 };
+const FLOOR = 72;
+
+const FIGS = {
+  'flexiones': [
+    { hip: [46, 59.5], t: -26, hand: [70, 72], foot: [21, 72], props: [['vest']] },
+    { hip: [46, 66], t: -9, hand: [70, 72], bendA: 1, foot: [19, 72], props: [['vest']] }
+  ],
+  'remo-neutro': [
+    { hip: [58, 47], t: -115, hand: [70, 17], foot: [70, 72], trx: [100, 6], props: [['door', 100]] },
+    { hip: [65, 44.5], t: -100, hand: [66, 25], bendA: 1, foot: [70, 72], trx: [100, 6], props: [['door', 100]] }
+  ],
+  'pica': [
+    { hip: [42, 34], t: 55, hand: [66, 72], foot: [22, 56], bendL: 1, props: [['chair', 8, 56, 22]] },
+    { hip: [45, 38], t: 64, hand: [66, 72], bendA: 1, foot: [22, 56], bendL: 1, props: [['chair', 8, 56, 22]] }
+  ],
+  'dominada-asistida': [
+    { hip: [55, 58], t: -95, hand: [55, 11], foot: [40, 72], knee: true, trx: [60, 4], props: [['door', 60], ['mat', 30, 72]] },
+    { hip: [57, 50], t: -92, hand: [58, 22], bendA: 1, foot: [44, 72], props: [['door', 60], ['mat', 30, 72]], trx: [60, 4] }
+  ],
+  'face-pull': [
+    { hip: [58, 47], t: -115, hand: [70, 17], foot: [70, 72], trx: [100, 6], props: [['door', 100]] },
+    { hip: [65, 44.5], t: -100, hand: [66, 14], bendA: -1, foot: [70, 72], trx: [100, 6], props: [['door', 100]] }
+  ],
+  'curl-trx': [
+    { hip: [58, 47], t: -115, hand: [70, 17], foot: [70, 72], trx: [100, 6], props: [['door', 100]] },
+    { hip: [63, 45], t: -105, hand: [57, 14], bendA: -1, foot: [70, 72], trx: [100, 6], props: [['door', 100]] }
+  ],
+  'triceps-trx': [
+    { hip: [52, 47], t: -62, hand: [84, 12], foot: [40, 72], bendL: -1, trx: [12, 6], props: [['door', 12]] },
+    { hip: [54, 49], t: -55, hand: [72, 20], bendA: -1, foot: [40, 72], trx: [12, 6], props: [['door', 12]] }
+  ],
+  'bulgara': [
+    { hip: [50, 46], t: -90, hand: [52, 69], foot: [60, 72], foot2: [24, 55], bendL2: 1, props: [['chair', 10, 55, 22], ['vest']] },
+    { hip: [46, 58], t: -84, hand: [50, 76], foot: [62, 72], foot2: [24, 55], bendL2: 1, props: [['chair', 10, 55, 22], ['vest']] }
+  ],
+  'curl-femoral': [
+    { hip: [50, 62], t: 163, hand: [44, 72], foot: [77, 58], trx: [84, 4], trxTo: 'foot', props: [['door', 84], ['mat', 10, 80]] },
+    { hip: [48, 53], t: 146, hand: [44, 72], foot: [63, 60], bendL: -1, trx: [84, 4], trxTo: 'foot', props: [['door', 84], ['mat', 10, 80]] }
+  ],
+  'laterales': [
+    { front: true, hip: [60, 44], t: -90, hand: [53, 44], hand2: [67, 44], foot: [56, 72], foot2: [64, 72], props: [['db', 'hand'], ['db', 'hand2']] },
+    { front: true, hip: [60, 44], t: -90, hand: [32, 22], hand2: [88, 22], bendA: 1, bendA2: -1, foot: [56, 72], foot2: [64, 72], props: [['db', 'hand'], ['db', 'hand2']] }
+  ],
+  'hip-thrust': [
+    { hip: [40, 66], t: -137, hand: [44, 70], foot: [60, 72], foot2: [57, 47], bendL2: -1, props: [['sofa', 0, 50, 24], ['vest']] },
+    { hip: [45, 50], t: 180, hand: [44, 52], foot: [60, 72], foot2: [72, 47], props: [['sofa', 0, 50, 24], ['vest']] }
+  ],
+  'rodillas-pecho': [
+    { hip: [55, 54], t: -12, hand: [79, 72], foot: [29, 60], trx: [18, 4], trxTo: 'foot', props: [['door', 18]] },
+    { hip: [55, 45], t: 10, hand: [79, 72], foot: [48, 59], bendL: -1, trx: [18, 4], trxTo: 'foot', props: [['door', 18]] }
+  ],
+  'gemelo': [
+    { hip: [50, 41], t: -90, hand: [70, 30], bendA: -1, foot: [50, 69], toe: [57, 65], foot2: [40, 54], bendL2: 1, props: [['step', 48, 65, 26], ['wall', 74], ['vest'], ['db', 'hand']] },
+    { hip: [52, 33], t: -90, hand: [70, 26], bendA: -1, foot: [52, 61], toe: [58, 65], foot2: [42, 46], bendL2: 1, props: [['step', 48, 65, 26], ['wall', 74], ['vest'], ['db', 'hand']] }
+  ],
+  'superman': [
+    { hip: [48, 69], t: 0, hand: [96, 70], foot: [20, 70], props: [['mat', 10, 104]] },
+    { hip: [48, 69], t: -14, hand: [96, 54], foot: [22, 60], props: [['mat', 10, 104]] }
+  ],
+  'fondos': [
+    { hip: [58, 47], t: -85, hand: [62, 46], foot: [44, 62], bendL: 1, props: [['chair', 54, 46, 20], ['vest']] },
+    { hip: [58, 60], t: -80, hand: [62, 46], bendA: 1, foot: [42, 70], bendL: 1, props: [['chair', 54, 46, 20], ['vest']] }
+  ],
+  'remo-prono': [
+    { hip: [58, 47], t: -115, hand: [70, 17], foot: [70, 72], trx: [100, 6], props: [['door', 100]] },
+    { hip: [65, 44.5], t: -100, hand: [67, 21], bendA: -1, foot: [70, 72], trx: [100, 6], props: [['door', 100]] }
+  ],
+  'flexiones-elevadas': [
+    { hip: [46, 52], t: -20, hand: [70, 72], foot: [20, 56], props: [['chair', 6, 56, 22], ['vest']] },
+    { hip: [46, 58], t: 0, hand: [70, 72], bendA: 1, foot: [20, 56], props: [['chair', 6, 56, 22], ['vest']] }
+  ],
+  'jalon': [
+    { hip: [58, 47], t: -115, hand: [70, 17], foot: [70, 72], trx: [100, 6], props: [['door', 100]] },
+    { hip: [67, 44], t: -95, hand: [70, 44], foot: [70, 72], trx: [100, 6], props: [['door', 100]] }
+  ],
+  'y-raise': [
+    { hip: [58, 47], t: -115, hand: [70, 17], foot: [70, 72], trx: [100, 6], props: [['door', 100]] },
+    { hip: [66, 44], t: -97, hand: [70, -2], foot: [70, 72], trx: [100, 6], props: [['door', 100]] }
+  ],
+  'diamante': [
+    { hip: [46, 59.5], t: -26, hand: [66, 72], foot: [21, 72] },
+    { hip: [46, 66], t: -9, hand: [66, 72], bendA: 1, foot: [19, 72] }
+  ],
+  'pistol': [
+    { hip: [62, 44], t: -92, hand: [84, 30], foot: [64, 72], foot2: [86, 58], trx: [104, 6], props: [['door', 104]] },
+    { hip: [52, 62], t: -68, hand: [80, 38], foot: [66, 72], foot2: [80, 60], trx: [104, 6], props: [['door', 104]] }
+  ],
+  'rdl': [
+    { hip: [50, 44], t: -90, hand: [52, 67], foot: [50, 72], foot2: [44, 70], props: [['vest'], ['db', 'hand']] },
+    { hip: [46, 44], t: 8, hand: [70, 70], foot: [50, 72], foot2: [18, 42], props: [['vest'], ['db', 'hand']] }
+  ],
+  'zancada': [
+    { hip: [50, 44], t: -90, hand: [52, 67], foot: [52, 72], foot2: [47, 72], props: [['vest']] },
+    { hip: [44, 56], t: -88, hand: [46, 79], foot: [60, 72], foot2: [22, 70], bendL2: 1, props: [['vest']] }
+  ],
+  'plancha': [
+    { hip: [52, 65], t: -12, hand: [88, 72], bendA: 1, foot: [24, 72], props: [['mat', 14, 96]] }
+  ],
+  'hollow': [
+    { hip: [56, 69], t: 195, hand: [12, 56], foot: [84, 61], props: [['mat', 8, 92]] }
+  ]
+};
+
+const rad = (a) => a * Math.PI / 180;
+const at = (p, len, ang) => [p[0] + len * Math.cos(rad(ang)), p[1] + len * Math.sin(rad(ang))];
+const r1 = (v) => Math.round(v * 10) / 10;
+
+// Dos segmentos de A hacia el objetivo C. Devuelve [codo o rodilla, punta].
+function ik(A, C, l1, l2, bend) {
+  const dx = C[0] - A[0], dy = C[1] - A[1];
+  const d = Math.max(Math.abs(l1 - l2) + 0.01, Math.min(l1 + l2 - 0.01, Math.hypot(dx, dy)));
+  const base = Math.atan2(dy, dx) * 180 / Math.PI;
+  const alpha = Math.acos((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)) * 180 / Math.PI;
+  return [at(A, l1, base + bend * alpha), at(A, d, base)];
+}
+
+function figSvg(p) {
+  const L = FIG_L;
+  const sh = at(p.hip, L.torso, p.t);
+  const head = at(sh, L.neck, p.t);
+  const off = p.front ? 7 : 0, hoff = p.front ? 4 : 0;
+  const shA = [sh[0] - off, sh[1]], shB = [sh[0] + off, sh[1]];
+  const hipA = [p.hip[0] - hoff, p.hip[1]], hipB = [p.hip[0] + hoff, p.hip[1]];
+  const arm = ik(shA, p.hand, L.ua, L.fa, p.bendA == null ? 1 : p.bendA);
+  const arm2 = p.hand2 ? ik(shB, p.hand2, L.ua, L.fa, p.bendA2 == null ? 1 : p.bendA2) : null;
+  const leg = ik(hipA, p.foot, L.th, L.sh, p.bendL == null ? -1 : p.bendL);
+  const leg2 = p.foot2 ? ik(hipB, p.foot2, L.th, L.sh, p.bendL2 == null ? -1 : p.bendL2) : null;
+  const pts = { hand: arm[1], hand2: arm2 && arm2[1], foot: leg[1] };
+  const line = (a, b, cls) => `<line class="${cls}" x1="${r1(a[0])}" y1="${r1(a[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}"/>`;
+  const poly = (ps, cls) => `<polyline class="${cls}" points="${ps.map((q) => r1(q[0]) + ',' + r1(q[1])).join(' ')}"/>`;
+  let back = '', front = '';
+  (p.props || []).forEach(([k, a, b, c]) => {
+    if (k === 'door') back += `<rect class="fp-door" x="${a - 1.5}" y="2" width="3" height="${FLOOR - 2}"/>`;
+    if (k === 'wall') back += `<rect class="fp-door" x="${a}" y="2" width="3" height="${FLOOR - 2}"/>`;
+    if (k === 'mat') back += `<rect class="fp-mat" x="${a}" y="${FLOOR - 1.2}" width="${b - a}" height="2.4" rx="1.2"/>`;
+    if (k === 'chair') back += `<rect class="fp-obj" x="${a}" y="${b}" width="${c}" height="3" rx="1"/><path class="fp-leg" d="M${a + 2} ${b + 3}V${FLOOR}M${a + c - 2} ${b + 3}V${FLOOR}"/>`;
+    if (k === 'sofa') back += `<rect class="fp-obj" x="${a}" y="${b}" width="${c}" height="${FLOOR - b}" rx="3"/>`;
+    if (k === 'step') back += `<rect class="fp-obj" x="${a}" y="${b}" width="${c}" height="${FLOOR - b}" rx="1.5"/>`;
+    if (k === 'vest') front += line(at(p.hip, L.torso * 0.25, p.t), at(p.hip, L.torso * 0.85, p.t), 'fp-vest');
+    if (k === 'db' && pts[a]) front += `<rect class="fp-db" x="${r1(pts[a][0] - 4)}" y="${r1(pts[a][1] - 1.6)}" width="8" height="3.2" rx="1.2"/>`;
+  });
+  let straps = '';
+  if (p.trx) {
+    const ends = p.trxTo === 'foot' ? [pts.foot] : [pts.hand];
+    straps = ends.map((e) => line(p.trx, e, 'fp-strap')).join('') + `<rect class="fp-anchor" x="${p.trx[0] - 2.5}" y="${p.trx[1] - 2}" width="5" height="4" rx="1"/>`;
+  }
+  const body = [
+    leg2 ? poly([hipB, leg2[0], leg2[1]], 'fb fb2') : '',
+    arm2 ? poly([shB, arm2[0], arm2[1]], 'fb fb2') : '',
+    poly([hipA, leg[0], leg[1]], 'fb'),
+    p.toe ? line(leg[1], p.toe, 'fb') : '',
+    p.front ? line(shA, shB, 'fb') + line(hipA, hipB, 'fb') : '',
+    line(p.hip, sh, 'fb'),
+    front,
+    poly([shA, arm[0], arm[1]], 'fb'),
+    `<circle class="fh" cx="${r1(head[0])}" cy="${r1(head[1])}" r="${L.head}"/>`
+  ].join('');
+  return `<svg class="fig" viewBox="0 -4 120 80" aria-hidden="true"><line class="fp-floor" x1="0" y1="${FLOOR}" x2="120" y2="${FLOOR}"/>${back}${straps}${body}</svg>`;
+}
+
+// Las dos posturas del ejercicio, con 1 y 2 debajo. Los ejercicios por tiempo tienen una.
+function figPair(ex) {
+  const f = FIGS[ex];
+  if (!f) return '';
+  return `<div class="figs${f.length === 1 ? ' one' : ''}" role="img" aria-label="Dibujo de ${EX[ex] ? EX[ex].n : ex}">${f.map((p, i) => `<figure>${figSvg(p)}${f.length > 1 ? `<figcaption>${i + 1}</figcaption>` : ''}</figure>`).join('<span class="figs-arrow" aria-hidden="true">⇄</span>')}</div>`;
+}
+
 
 // Descansos por defecto, en segundos. Se cambian en Guía → Ajustes.
 const REST = { pair: 30, round: 90, heavy: 120, single: 60, block: 90 };
@@ -842,9 +1103,17 @@ function renderHoy() {
     <div class="rot" aria-label="Rotación">${ROTATION.map((r) => `<span class="${r === id ? 'on' : ''}">${esc(SESSIONS[r].n)}</span>`).join('')}</div>`;
 }
 
+// Dibujo, pasos, errores típicos y vídeo de un ejercicio.
+function technique(ex) {
+  const e = EX[ex], v = VIDEOS[ex];
+  return `${figPair(ex)}
+    <div><h4>Cómo se hace</h4><ol>${e.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ol></div>
+    ${ERR[ex] ? `<div><h4>Errores típicos</h4><ul class="errs">${ERR[ex].map((h) => `<li>${esc(h)}</li>`).join('')}</ul></div>` : ''}
+    ${v ? `<a class="vid" href="https://www.youtube.com/watch?v=${v[0]}" target="_blank" rel="noopener">Ver vídeo<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a><span class="s vid-src">${esc(v[1])}${v[2] === 'en' ? ' · en inglés' : ''}</span>` : ''}`;
+}
+
 function exItem(it, slot) {
   const e = EX[it.ex];
-  const q = encodeURIComponent(e.n + ' ejercicio técnica');
   const tg = targetOf(it.ex);
   const last = lastPerf(it.ex);
   const sets = tg.reps.map((v, i) => `<div class="mst"><span>S${i + 1}</span><button class="stp-b" data-tadj="${it.ex}:${i}:-1" aria-label="Menos en la serie ${i + 1}">−</button><b>${v}</b><button class="stp-b" data-tadj="${it.ex}:${i}:1" aria-label="Más en la serie ${i + 1}">+</button></div>`).join('');
@@ -862,9 +1131,8 @@ function exItem(it, slot) {
       </div>
       <label class="note"><h4>Nota</h4><textarea data-note="${it.ex}" rows="2" placeholder="Ej.: pies a 2 pasos del anclaje">${esc(noteOf(it.ex))}</textarea></label>
       <div class="chips">${e.m.map((m) => `<span class="bdg acc">${esc(m)}</span>`).join('')}${e.trx ? `<span class="bdg">TRX: ${esc(e.trx)}</span>` : ''}</div>
-      <div><h4>Cómo se hace</h4><ol>${e.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ol></div>
+      ${technique(it.ex)}
       <div><h4>Para subir dificultad</h4><ul>${e.up.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></div>
-      <a class="vid" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">Ver vídeo<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
     </div>
   </details>`;
 }
@@ -1404,7 +1672,7 @@ function exCard(i, label) {
     ${noteOf(s.ex) ? `<p class="lv-note">${esc(noteOf(s.ex))}</p>` : ''}
     ${e.side ? '<p class="lv-hint">Haz las dos piernas seguidas: eso es una serie.</p>' : ''}
     ${partner ? `<p class="lv-hint">Superserie: alterna con ${esc(EX[partner.ex].n)}.</p>` : ''}
-    ${liveUI.how ? `<ol class="lv-how">${e.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ol>` : `<button class="link" data-lv="how">Ver técnica</button>`}
+    ${liveUI.how ? `<div class="lv-tech">${technique(s.ex)}</div>` : `<button class="link" data-lv="how">Ver técnica</button>`}
   </div>`;
 }
 
